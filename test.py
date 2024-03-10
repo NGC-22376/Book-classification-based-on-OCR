@@ -1,3 +1,4 @@
+# 可以在这里面测试一些功能和包
 from paddleocr import PaddleOCR, draw_ocr
 
 ocr = PaddleOCR()  # need to run only once to download and load model into memory
