@@ -2,7 +2,7 @@
 from paddleocr import PaddleOCR, draw_ocr
 
 ocr = PaddleOCR()  # need to run only once to download and load model into memory
-img_path = 'myPic.png'
+img_path = 'test-image.png'
 result = ocr.ocr(img_path, cls=False)
 for idx in range(len(result)):
     res = result[idx]
