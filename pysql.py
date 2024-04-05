@@ -9,10 +9,10 @@ db = pymysql.connect(host='localhost',
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
 # SQL 插入语句
-sql = "INSERT INTO EMPLOYEE('微积分', \
-       '线性代数', '数字逻辑与电路', '离散数学', '大学英语','已分类书籍总数') \
-       VALUES (%d, %d,  %d,  %d,  %d , %d)" % \
-      (a, b, c, d, e, f)
+sql = "INSERT INTO EMPLOYEE('书名', \
+       '当前时间', '已分类书籍总数') \
+       VALUES (%s, %s,  %d)" % \
+      (a, b, c)
 try:
     # 执行sql语句
     cursor.execute(sql)
