@@ -24,3 +24,54 @@ except Error:
 
 # 关闭数据库连接
 db.close()
+
+import paddleocr
+import cv2
+import mysql.connector
+
+# 初始化PaddleOCR
+ocr = paddleocr.OCR()
+
+# 打开摄像头
+cap = cv2.VideoCapture(0)
+
+# 读取图像
+ret, frame = cap.read()
+
+# 保存图像
+cv2.imwrite('book_photo.jpg', frame)
+
+# 进行文字识别
+result = ocr.ocr('book_photo.jpg', cls=True)
+
+# 连接MySQL数据库
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='yufei5312',
+    database='hello'
+)
+cursor = conn.cursor()
+
+# 遍历识别结果，找到书名
+category = "Unknown"
+book_name = "Unknown"
+for line in result:
+    book_name = line[0]
+    cursor.execute("SELECT category FROM books WHERE name = %s", (book_name,))
+    category = cursor.fetchone()
+    if category:
+        break
+
+if category:
+    category = category[0]
+else:
+    category = "Unknown"
+
+# 输出结果文件
+with open('result.txt', 'w') as f:
+    f.write(f"The book '{book_name}' belongs to the category '{category}'")
+
+# 关闭连接
+cursor.close()
+conn.close()
