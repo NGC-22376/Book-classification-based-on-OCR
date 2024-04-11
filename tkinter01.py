@@ -19,7 +19,6 @@ label = tk.Label(window, textvariable=v,
 v.set("微积分：%d；\n"
       "线性代数：%d；\n"
       "数字逻辑与电路：%d；\n"
-      "大学英语：%d；\n"
       "离散数学：%d" % (a, b, c, d, e))
 label.pack()
 window.mainloop()
