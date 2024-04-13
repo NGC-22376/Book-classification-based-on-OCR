@@ -8,7 +8,6 @@ a = 1
 b = 2
 c = 3
 d = 4
-e = 5
 v = tk.StringVar()
 label = tk.Label(window, textvariable=v,
                  width=300, height=300,  # width为标签的宽，height为高
@@ -19,6 +18,6 @@ label = tk.Label(window, textvariable=v,
 v.set("微积分：%d；\n"
       "线性代数：%d；\n"
       "数字逻辑与电路：%d；\n"
-      "离散数学：%d" % (a, b, c, d, e))
+      "离散数学：%d" % (a, b, c, d))
 label.pack()
 window.mainloop()

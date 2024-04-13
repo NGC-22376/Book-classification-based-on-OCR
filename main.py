@@ -1,18 +1,22 @@
+import cv2
+import mysql.connector
+from pymysql import Error
+import paddleocr
 import pymysql
 
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
-                     password='yufei5312',
+                     password='MySQL08091221',
                      database='hello')
 
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
 # SQL 插入语句
-sql = "INSERT INTO EMPLOYEE('书名', \
-       '当前时间', '已分类书籍总数') \
-       VALUES (%s, %s,  %d)" % \
+sql = "INSERT INTO EMPLOYEE(`书名`, `当前时间`, `已分类书籍总数`) \
+       VALUES (%s, %s, %d)" % \
       (a, b, c)
+
 try:
     # 执行sql语句
     cursor.execute(sql)
@@ -24,10 +28,6 @@ except Error:
 
 # 关闭数据库连接
 db.close()
-
-import paddleocr
-import cv2
-import mysql.connector
 
 # 初始化PaddleOCR
 ocr = paddleocr.OCR()
@@ -48,7 +48,7 @@ result = ocr.ocr('book_photo.jpg', cls=True)
 conn = mysql.connector.connect(
     host='localhost',
     user='root',
-    password='yufei5312',
+    password='MySQL08091221',
     database='hello'
 )
 cursor = conn.cursor()
