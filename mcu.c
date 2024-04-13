@@ -3,11 +3,11 @@
 
 
 sbit PWM = P3^7;
-sbit LED = P2^0;
-sbit LED_2 = P2^1;
+sfr ISP_CONTR  = 0xE7;
 unsigned char count=0;
-unsigned char timer1=1;
+unsigned char timer1=2;
 unsigned char time_all = 40;
+unsigned char loop = 0;
 
 
 
@@ -49,25 +49,24 @@ void Timer0_Routine() interrupt 1{
 	
 	if (count <= timer1){
 		PWM = 1;
-		LED = 0;
 	} else{
 		PWM = 0;
-		LED_2 = 0;
 	}
 	count += 1;
 	
 	if (count == time_all){
 		count = 0;
+		loop += 1;
 	}
+	if (loop == 200){
+		loop = 0;
+    		ISP_CONTR = 0x60; 
+  }
 }
+
 
 void main(){
 	Timer0_Init();
 	while(1){
 	}
 }
-
-
-
-
-	

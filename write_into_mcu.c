@@ -2,8 +2,9 @@
 #include "string.h"
 
 #define RESFILE "result.txt"
-#define PREFILE "C:\\Users\\30744\\Desktop\\CV.txt"
+#define PREFILE "C:\\Users\\30744\\Desktop\\ComputerVision\\CV.txt"
 #define ISPFILE "C:\\CodeFiles\\MCU_C51\\CV.c"
+#define target_line 8
 
 int main() {
     FILE *f = fopen(RESFILE, "r");
@@ -21,15 +22,16 @@ int main() {
             char file_msg[100];
             while (fgets(file_msg, sizeof(file_msg), f_old)) {
                 line++;
-                if (line == 9) {
+                if (line == target_line) {
                     fprintf(f_new, "%s%c%c%c", msg, num, ';', '\n');
-                } else {
+                }
+                else {
                     fprintf(f_new, "%s", file_msg);
                 }
                 memset(file_msg, '\0', sizeof(file_msg));
             }
         }
         fclose(f_new);
-
     }
+
 }
