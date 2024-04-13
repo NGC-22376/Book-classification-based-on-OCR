@@ -3,7 +3,7 @@
 
 #define RESFILE "result.txt"
 #define PREFILE "C:\\Users\\30744\\Desktop\\ComputerVision\\CV.txt"
-#define ISPFILE "C:\\CodeFiles\\MCU_C51\\CV.c"
+#define ISPFILE "C:\\Users\\30744\\Desktop\\ComputerVision\\mcu.c"
 #define target_line 8
 
 int main() {

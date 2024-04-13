@@ -2,10 +2,10 @@
 #include <intrins.h>
 
 
-sbit PWM = P3^7;
+sbit PWM = P2^7;
 sfr ISP_CONTR  = 0xE7;
 unsigned char count=0;
-unsigned char timer1=2;
+unsigned char timer1=1;
 unsigned char time_all = 40;
 unsigned char loop = 0;
 
@@ -58,9 +58,9 @@ void Timer0_Routine() interrupt 1{
 		count = 0;
 		loop += 1;
 	}
-	if (loop == 200){
+	if (loop == 100){
 		loop = 0;
-    		ISP_CONTR = 0x60; 
+    ISP_CONTR = 0x60; 
   }
 }
 
