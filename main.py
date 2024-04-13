@@ -74,7 +74,7 @@ while Ture:
 
     # 输出结果文件
     with open('result.txt', 'w') as f:
-        f.write(f"The book '{n}' belongs to the category '{category}'")
+        f.write(f"{n}")
 
     # 按'q'键退出程序
     if cv2.waitKey(1) == ord('q'):
