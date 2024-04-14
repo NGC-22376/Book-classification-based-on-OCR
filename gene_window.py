@@ -25,12 +25,16 @@ try:
     # 获取所有记录列表
     results = cursor.fetchall()
     for row in results:
-        a = row[0][0]
-        b = row[0][1]
-        c = row[0][2]
-        d = row[0][3]
+        na = row[0][0]
+        nb = row[0][1]
+        nc = row[0][2]
+        nd = row[0][3]
+        a = row[1][0]
+        b = row[1][1]
+        c = row[1][2]
+        d = row[1][3]
 except Exception:
-    v.set("Error:unable to fetch data")
+    print("Error:unable to fetch data")
 
 e = a+b+c+d
 label = tk.Label(window, textvariable=v,
@@ -39,11 +43,11 @@ label = tk.Label(window, textvariable=v,
                  wraplength=600,  # 设置多少单位后开始换行
                  anchor='w',
                  justify='left')  # 设置文本在标签中显示的位置
-v.set("微积分：%d；\n"
-      "线性代数：%d；\n"
-      "数字逻辑与电路：%d；\n"
-      "离散数学：%d；\n"
-      "共计：%d" % (a, b, c, d, e))
+v.set("%s：%d；\n"
+      "%s：%d；\n"
+      "%s：%d；\n"
+      "%s：%d；\n"
+      "共计：%d" % (na, a, nb, b, nc, c, nd, d, e))
 label.pack()
 window.mainloop()
 # 关闭数据库
