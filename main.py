@@ -1,17 +1,26 @@
-import cv2
-from pymysql import Error
-import paddleocr
-import pymysql
 import time
 
+import cv2
+import paddleocr
+import pymysql
+from pymysql import Error
+
 # 创建列表包括书名
-book_names = ['微积分','线性代数','数字逻辑与电路','离散数学']
+book_names = ['微积分', '线性代数', '数字逻辑概论', '离散数学']
 
 # 初始化PaddleOCR
-ocr = paddleocr.OCR()
+ocr = paddleocr.PaddleOCR()
 
 # 打开摄像头
 cap = cv2.VideoCapture(0)
+
+while cap.isOpened():
+    retval, image = cap.read()
+    cv2.imshow("Video", image)
+    cv2.imwrite('book_photo.jpg', image)
+    key = cv2.waitKey(1)
+    if key == 32:
+        break
 
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
@@ -19,65 +28,56 @@ db = pymysql.connect(host='localhost',
                      password='MySQL08091221',
                      database='hello')
 
-# 设置无限循环
-while Ture:
-    # 读取图像
-    ret, frame = cap.read()
+# 进行文字识别
+result = ocr.ocr('book_photo.jpg', cls=True)
 
-    # 保存图像
-    cv2.imwrite('book_photo.jpg', frame)
+# 遍历result列表 判断列表里的书名是否在OCR识别里
+n = 'NULL'
+for line in result:
+    for word in line:
+        text = word[1][0]
+        for book_name in book_names:
+            if book_name in text:
+                n = book_name
+                break
 
-    # 进行文字识别
-    result = ocr.ocr('book_photo.jpg', cls=True)
+# 获取当前时间
+t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
-    # 遍历result列表 判断列表里的书名是否在OCR识别里
-    for line in result:
-        for word in line:
-            text = word[1][0]
-            for book_name in book_names:
-                if book_name in text:
-                    n = book_name
-                    break
+# 使用cursor()方法获取操作游标
+cursor = db.cursor()
 
-    # 获取当前时间
-    t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-
-    # 使用cursor()方法获取操作游标
-    cursor = db.cursor()
-
-    # SQL 插入语句
-    sql = "INSERT INTO hello.books(root,yufei5312)\
+# SQL 插入语句
+sql = "INSERT INTO hello.books(root,yufei5312)\
            VALUES (%s, %s, %d)" % \
-          (n, t, c)
+      (n, t, 0)
 
-    try:
-        # 开始sql事务
-        db.begin()
-        # 执行sql语句
-        cursor.execute(sql)
-        # 提交sql事务
-        db.commit()
-    except Error:
-        # 发生错误时回滚
-        db.rollback()
+try:
+    # 开始sql事务
+    db.begin()
+    # 执行sql语句
+    cursor.execute(sql)
+    # 提交sql事务
+    db.commit()
+except Error:
+    # 发生错误时回滚
+    db.rollback()
 
-    #  转换为数字
-    if n == '微积分':
-        n = 0
-    elif n == '线性代数':
-        n = 1
-    elif n == '数字逻辑与电路':
-        n = 2
-    else:
-        n = 3
+#  转换为数字
+if n == '微积分':
+    n = 0
+elif n == '线性代数':
+    n = 1
+elif n == '数字逻辑概论':
+    n = 2
+elif n == '离散数学':
+    n = 3
+else:
+    n = 4
 
-    # 输出结果文件
-    with open('result.txt', 'w') as f:
-        f.write(f"{n}")
-
-    # 按'q'键退出程序
-    if cv2.waitKey(1) == ord('q'):
-        break
+# 输出结果文件
+with open('result.txt', 'w') as f:
+    f.write(f"{n}")
 
 # 释放摄像头资源
 cap.release()
