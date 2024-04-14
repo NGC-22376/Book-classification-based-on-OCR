@@ -1,0 +1,21 @@
+@echo off
+setlocal enabledelayedexpansion
+REM 设置python路径
+conda activate computervision
+REM 设置.py文件路径
+cd /d"%~dp0"
+set PY1=main.py
+set PY2=gene_window.py
+REM 执行
+python PY1
+REM 使用C语言编译器生成可执行文件并执行，需要额外库的需要链接
+cl /Feoutput1.exe write_into_mcu.c
+start output1.exe
+REM 使用Keil运行.C文件，需要连接额外库
+armcc mcu.c
+REMstc-isp操作
+
+
+python PY2
+echo ALL DONE
+pause
