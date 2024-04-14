@@ -50,7 +50,7 @@ cursor = db.cursor()
 # SQL 插入语句
 sql = "INSERT INTO hello.books(root,yufei5312)\
            VALUES (%s, %s, %d)" % \
-      (n, t, 0)
+      (n, t, 1)
 
 try:
     # 开始sql事务
