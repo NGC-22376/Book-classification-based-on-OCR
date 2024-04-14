@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 REM 设置python路径
 conda activate computervision
 REM 设置.py文件路径
+:roundstart
 cd /d"%~dp0"
 set PY1=main.py
 set PY2=gene_window.py
@@ -16,6 +17,13 @@ armcc mcu.c
 REMstc-isp操作
 
 
-python PY2
+echo Press 'Q' to quit the round.
+echo Any other key to continue...
+choice /C Q /N /M ""
+
+if errorlevel 2 goto roundend
+if errorlevel 1 goto roundstart
+:roundend
 echo ALL DONE
-pause
+python PY2
+PAUSE
