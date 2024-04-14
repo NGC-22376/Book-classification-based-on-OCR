@@ -13,6 +13,12 @@ ocr = paddleocr.OCR()
 # 打开摄像头
 cap = cv2.VideoCapture(0)
 
+# 打开数据库连接
+db = pymysql.connect(host='localhost',
+                     user='root',
+                     password='MySQL08091221',
+                     database='hello')
+
 # 设置无限循环
 while Ture:
     # 读取图像
@@ -36,12 +42,6 @@ while Ture:
     # 获取当前时间
     t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
-    # 打开数据库连接
-    db = pymysql.connect(host='localhost',
-                         user='root',
-                         password='MySQL08091221',
-                         database='hello')
-
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
 
@@ -51,16 +51,15 @@ while Ture:
           (n, t, c)
 
     try:
+        # 开始sql事务
+        db.begin()
         # 执行sql语句
         cursor.execute(sql)
-        # 执行sql语句
+        # 提交sql事务
         db.commit()
     except Error:
         # 发生错误时回滚
         db.rollback()
-
-    # 关闭数据库连接
-    db.close()
 
     #  转换为数字
     if n == '微积分':
@@ -82,3 +81,6 @@ while Ture:
 
 # 释放摄像头资源
 cap.release()
+
+# 关闭数据库连接
+db.close()
