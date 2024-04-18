@@ -25,7 +25,7 @@ while cap.isOpened():
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
-                     password='yufei5312',
+                     password='MySQL08091221',
                      database='hello')
 
 # 进行文字识别

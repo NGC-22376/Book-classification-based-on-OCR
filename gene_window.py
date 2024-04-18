@@ -1,4 +1,5 @@
 import tkinter as tk
+
 import pymysql
 
 window = tk.Tk()
@@ -6,19 +7,18 @@ window.title('图书分类结果')
 window.geometry('640x640')
 v = tk.StringVar()
 
-a=0
-b=0
-c=0
-d=0
+a = 0
+b = 0
+c = 0
+d = 0
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
-                     password='yufei5312',
+                     password='MySQL08091221',
                      database='hello')
 
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
-
 
 sql1 = "SELECT * FROM `books` WHERE `name` = '微积分'"
 sql2 = "SELECT * FROM `books` WHERE `name` = '线性代数'"
@@ -96,7 +96,7 @@ except Exception:
     print("Error:unable to fetch data")
 
 print(results)
-e = a+b
+e = a + b + c + d
 label = tk.Label(window, textvariable=v,
                  width=300, height=300,  # width为标签的宽，height为高
                  font=30,
