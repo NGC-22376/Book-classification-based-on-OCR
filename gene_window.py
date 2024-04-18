@@ -4,7 +4,7 @@ import pymysql
 
 window = tk.Tk()
 window.title('图书分类结果')
-window.geometry('640x640')
+window.geometry('800x640')
 v = tk.StringVar()
 
 a = 0
@@ -95,18 +95,21 @@ try:
 except Exception:
     print("Error:unable to fetch data")
 
+<<<<<<< HEAD
 print(results)
 e = a + b + c + d
+=======
+e = a+b+c+d
+>>>>>>> c6bade01e9e44b9d4a0e5cf43e5c49c0a6d67dcf
 label = tk.Label(window, textvariable=v,
-                 width=300, height=300,  # width为标签的宽，height为高
-                 font=30,
-                 wraplength=600,  # 设置多少单位后开始换行
-                 anchor='w',
-                 justify='left')  # 设置文本在标签中显示的位置
-v.set("%s：%d；\n"
-      "%s：%d；\n"
-      "%s：%d；\n"
-      "%s：%d；\n"
+                 width=1000, height=1000,  # width为标签的宽，height为高
+                 font=("黑体", 50),
+                 wraplength=600,
+                 justify="left")
+v.set("%s：%d\n"
+      "%s：%d\n"
+      "%s：%d\n"
+      "%s：%d\n"
       "共计：%d" % (na, a, nb, b, nc, c, nd, d, e))
 label.pack()
 window.mainloop()
