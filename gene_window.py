@@ -19,13 +19,69 @@ db = pymysql.connect(host='localhost',
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
 
-sql = "SELECT `name`,COUNT(*)\
+
+sql1 = "SELECT * FROM `books` WHERE `name` = '微积分'"
+sql2 = "SELECT * FROM `books` WHERE `name` = '线性代数'"
+sql3 = "SELECT * FROM `books` WHERE `name` = '数字逻辑概论'"
+sql4 = "SELECT * FROM `books` WHERE `name` = '离散数学'"
+sql5 = "SELECT `name`,SUM(`count`)\
 FROM `books`\
 GROUP BY `name`;"
+try:
+    # 执行sql语句
+    cursor.execute(sql1)
+    # 获取记录列表
+    result1 = cursor.fetchone()
+    if not result1:
+        insert_sql1 = "INSERT INTO `books` VALUES ('%s','0','0')" % "微积分"
+        cursor.execute(insert_sql1)
+        cursor.commit()
+
+except Exception:
+    print("Error:unable to insert data")
 
 try:
     # 执行sql语句
-    cursor.execute(sql)
+    cursor.execute(sql2)
+    # 获取记录列表
+    result2 = cursor.fetchone()
+    if not result2:
+        insert_sql2 = "INSERT INTO `books` VALUES ('%s','0','0')" % "线性代数"
+        cursor.execute(insert_sql2)
+        cursor.commit()
+
+except Exception:
+    print("Error:unable to insert data")
+
+try:
+    # 执行sql语句
+    cursor.execute(sql3)
+    # 获取记录列表
+    result3 = cursor.fetchone()
+    if not result3:
+        insert_sql3 = "INSERT INTO `books` VALUES ('%s','0','0')" % "数字逻辑概论"
+        cursor.execute(insert_sql3)
+        cursor.commit()
+
+except Exception:
+    print("Error:unable to insert data")
+
+try:
+    # 执行sql语句
+    cursor.execute(sql4)
+    # 获取记录列表
+    result4 = cursor.fetchone()
+    if not result4:
+        insert_sql4 = "INSERT INTO `books` VALUES ('%s','0','0')" % "离散数学"
+        cursor.execute(insert_sql4)
+        cursor.commit()
+
+except Exception:
+    print("Error:unable to insert data")
+
+try:
+    # 执行sql语句
+    cursor.execute(sql5)
     # 获取所有记录列表
     results = cursor.fetchall()
     na = results[0][0]
