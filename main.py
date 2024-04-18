@@ -49,8 +49,8 @@ cursor = db.cursor()
 
 # SQL 插入语句
 sql = "INSERT INTO `books`\
-       VALUES (%s, %s, %d)" % \
-      (n, t, 1)
+       VALUES ('%s', '%s', '1')" % \
+      (n, t)
 
 try:
     # 执行sql语句

@@ -10,8 +10,6 @@ a=0
 b=0
 c=0
 d=0
-nc="数字逻辑概论"
-nd="离散数学"
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
@@ -30,6 +28,10 @@ try:
     cursor.execute(sql)
     # 获取所有记录列表
     results = cursor.fetchall()
+    na = results[0][0]
+    nb = results[1][0]
+    nc = results[2][0]
+    nd = results[3][0]
     a = results[0][1]
     b = results[1][1]
     c = results[2][1]
