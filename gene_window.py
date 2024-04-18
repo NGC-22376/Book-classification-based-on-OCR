@@ -6,6 +6,12 @@ window.title('图书分类结果')
 window.geometry('640x640')
 v = tk.StringVar()
 
+a=0
+b=0
+c=0
+d=0
+nc="数字逻辑概论"
+nd="离散数学"
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
@@ -15,28 +21,24 @@ db = pymysql.connect(host='localhost',
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
 
-sql = "SELECT name,COUNT(*)\
-FROM books\
-GROUP BY name;"
+sql = "SELECT `name`,COUNT(*)\
+FROM `books`\
+GROUP BY `name`;"
 
 try:
     # 执行sql语句
     cursor.execute(sql)
     # 获取所有记录列表
     results = cursor.fetchall()
-    for row in results:
-        na = row[0][0]
-        nb = row[0][1]
-        nc = row[0][2]
-        nd = row[0][3]
-        a = row[1][0]
-        b = row[1][1]
-        c = row[1][2]
-        d = row[1][3]
+    a = results[0][1]
+    b = results[1][1]
+    c = results[2][1]
+    d = results[3][1]
 except Exception:
     print("Error:unable to fetch data")
 
-e = a+b+c+d
+print(results)
+e = a+b
 label = tk.Label(window, textvariable=v,
                  width=300, height=300,  # width为标签的宽，height为高
                  font=30,

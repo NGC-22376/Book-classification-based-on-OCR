@@ -25,7 +25,7 @@ while cap.isOpened():
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
-                     password='MySQL08091221',
+                     password='yufei5312',
                      database='hello')
 
 # 进行文字识别
@@ -48,13 +48,11 @@ t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 cursor = db.cursor()
 
 # SQL 插入语句
-sql = "INSERT INTO hello.books(root,yufei5312)\
-           VALUES (%s, %s, %d)" % \
+sql = "INSERT INTO `books`\
+       VALUES (%s, %s, %d)" % \
       (n, t, 1)
 
 try:
-    # 开始sql事务
-    db.begin()
     # 执行sql语句
     cursor.execute(sql)
     # 提交sql事务
