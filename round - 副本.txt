@@ -1,14 +1,14 @@
 @echo off
 setlocal enabledelayedexpansion
 REM 设置python路径
-conda activate computervision
+conda activate cv
 REM 设置.py文件路径
 :roundstart
-cd /d"%~dp0"
+cd C:\Users\30744\Desktop\ComputerVision
 set PY1=main.py
 set PY2=gene_window.py
 REM 执行
-python PY1
+python main.py
 REM 使用C语言编译器生成可执行文件并执行，需要额外库的需要链接
 cl /Feoutput1.exe write_into_mcu.c
 start output1.exe
@@ -25,5 +25,5 @@ if errorlevel 2 goto roundend
 if errorlevel 1 goto roundstart
 :roundend
 echo ALL DONE
-python PY2
+python gene_window.py
 PAUSE
