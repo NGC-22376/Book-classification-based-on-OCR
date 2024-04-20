@@ -1,17 +1,20 @@
 #include <REG52.H>
 #include <intrins.h>
 
-
+//设置PWM输出引脚和复位寄存器
 sbit PWM = P2^7;
 sfr ISP_CONTR  = 0xE7;
+//中断计数器
 unsigned char count=0;
-unsigned char timer1=2;
+//PWM信号一个周期内高电平时间和总时间，乘0.5ms
+unsigned char timer1=3;
 unsigned char time_all = 40;
+//复位计数器
 unsigned char loop = 0;
 
 
-
-void Timer0_Init(void)		//500us
+//中断初始化，每0.5ms中断一次
+void Timer0_Init(void)	
 {
 	TMOD &= 0xF0;		
 	TMOD |= 0x01;		
@@ -24,24 +27,7 @@ void Timer0_Init(void)		//500us
 	EA=1;
 }
 
-void Delay500ms()		//@12.000MHz
-{
-	unsigned char i, j, k;
-
-	_nop_();
-	i = 4;
-	j = 205;
-	k = 187;
-	do
-	{
-		do
-		{
-			while (--k);
-		} while (--j);
-	} while (--i);
-}
-
-
+//中断时的执行内容
 void Timer0_Routine() interrupt 1{
 	TL0 = 0x0C;
 	TH0 = 0xFE;
