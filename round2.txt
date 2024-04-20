@@ -1,8 +1,7 @@
-
+@echo off
 setlocal enabledelayedexpansion
 REM python
 call C:\Users\30744\anaconda3\Scripts\activate.bat cv
-PAUSE
 :roundstart
 cd C:\Users\30744\Desktop\ComputerVision
 set PY1=main.py
@@ -14,11 +13,17 @@ UV4 C:\Keil9.6.1\UV4 -b  C:\CodeFiles\MCU_C51\code.uvproj -o C:\CodeFiles\MCU_C5
 
 echo Press 'Q' to quit the round.
 echo Any other key to continue...
-choice /C Q /N /M ""
+choice /C YQ /N /M "Do you want to continue? [Y/Q]"
 
-if errorlevel 2 goto roundend
-if errorlevel 1 goto roundstart
+if errorlevel 2 (
+    echo You chose Quit.
+    goto roundend
+) 
+else (
+    echo You chose Yes.
+    goto roundstart
+)
 :roundend
 echo ALL DONE
+cd C:\Users\30744\Desktop\ComputerVision
 python gene_window.py
-PAUSE
