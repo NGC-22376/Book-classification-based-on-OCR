@@ -95,12 +95,11 @@ try:
 except Exception:
     print("Error:unable to fetch data")
 
-<<<<<<< HEAD
+
 print(results)
 e = a + b + c + d
-=======
 e = a+b+c+d
->>>>>>> c6bade01e9e44b9d4a0e5cf43e5c49c0a6d67dcf
+
 label = tk.Label(window, textvariable=v,
                  width=1000, height=1000,  # width为标签的宽，height为高
                  font=("黑体", 50),
