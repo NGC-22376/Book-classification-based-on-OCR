@@ -5,7 +5,7 @@
 sbit PWM = P2^7;
 sfr ISP_CONTR  = 0xE7;
 unsigned char count=0;
-unsigned char timer1=1;
+unsigned char timer1=2;
 unsigned char time_all = 40;
 unsigned char loop = 0;
 
