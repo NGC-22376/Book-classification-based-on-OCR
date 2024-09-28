@@ -47,14 +47,27 @@ t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
 
+# SQL查询id
+sql1 = "SELECT `cate_id` FROM `books_cate` WHERE `name` = %s" % n
+try:
+    # 执行sql语句
+    cursor.execute(sql1)
+    # 获取记录列表
+    cate_id = cursor.fetchone()
+    if not cate_id:
+        print("no found")
+
+except Exception:
+    print("Error:unable to insert data")
+
 # SQL 插入语句
-sql = "INSERT INTO `books`\
-       VALUES ('%s', '%s', '1')" % \
-      (n, t)
+sql2 = "INSERT INTO `books_count`\
+       VALUES ('%s', '%s', '1','%s')" % \
+      (cate_id, t, n)
 
 try:
     # 执行sql语句
-    cursor.execute(sql)
+    cursor.execute(sql2)
     # 提交sql事务
     db.commit()
 except Error:
