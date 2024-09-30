@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from config import sql_msg
 import pymysql
 
 window = tk.Tk()
@@ -12,10 +12,11 @@ b = 0
 c = 0
 d = 0
 # 打开数据库连接
-db = pymysql.connect(host='localhost',
-                     user='root',
-                     password='MySQL08091221',
-                     database='hello')
+
+db = pymysql.connect(host=sql_msg['my_host'],
+                     user=sql_msg['my_root'],
+                     password=sql_msg['my_password'],
+                     database=sql_msg['book_database'])
 
 # 使用cursor()方法获取操作游标
 cursor = db.cursor()
@@ -95,12 +96,6 @@ try:
 except Exception:
     print("Error:unable to fetch data")
 
-<<<<<<< HEAD
-print(results)
-e = a + b + c + d
-=======
-e = a+b+c+d
->>>>>>> c6bade01e9e44b9d4a0e5cf43e5c49c0a6d67dcf
 label = tk.Label(window, textvariable=v,
                  width=1000, height=1000,  # width为标签的宽，height为高
                  font=("黑体", 50),
@@ -110,7 +105,7 @@ v.set("%s：%d\n"
       "%s：%d\n"
       "%s：%d\n"
       "%s：%d\n"
-      "共计：%d" % (na, a, nb, b, nc, c, nd, d, e))
+      "共计：%d" % (na, a, nb, b, nc, c, nd, d))
 label.pack()
 window.mainloop()
 # 关闭数据库
