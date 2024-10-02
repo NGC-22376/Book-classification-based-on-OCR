@@ -1,5 +1,8 @@
 import time
 
+from networkx.classes import add_path
+
+from config import sql_msg, path_msg
 import cv2
 import paddleocr
 import pymysql
@@ -17,19 +20,19 @@ cap = cv2.VideoCapture(0)
 while cap.isOpened():
     retval, image = cap.read()
     cv2.imshow("Video", image)
-    cv2.imwrite('book_photo.jpg', image)
+    cv2.imwrite(path_msg['photo_path'], image)
     key = cv2.waitKey(1)
     if key == 32:
         break
 
 # 打开数据库连接
-db = pymysql.connect(host='localhost',
-                     user='root',
-                     password='MySQL08091221',
-                     database='hello')
+db = pymysql.connect(host=sql_msg['my_host'],
+                     user=sql_msg['my_root'],
+                     password=sql_msg['my_password'],
+                     database=sql_msg['book_database'])
 
 # 进行文字识别
-result = ocr.ocr('book_photo.jpg', cls=True)
+result = ocr.ocr(path_msg['photo_path'], cls=True)
 
 # 遍历result列表 判断列表里的书名是否在OCR识别里
 n = 'NULL'
@@ -87,7 +90,7 @@ else:
     n = 4
 
 # 输出结果文件
-with open('result.txt', 'w') as f:
+with open(path_msg["result_path"], 'w') as f:
     f.write(f"{n}")
 
 # 释放摄像头资源
