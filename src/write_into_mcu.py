@@ -1,7 +1,10 @@
+from config import path_msg
+
+
 # 打开目标文件
-res_file = open(r"C:\Users\30744\Desktop\ComputerVision\result.txt", 'r')
-pre_file = open(r"C:\Users\30744\Desktop\ComputerVision\CV.txt", 'r', encoding='utf-8')
-isp_file = open(r"C:\Users\30744\Desktop\ComputerVision\mcu.c", 'w')
+res_file = open(path_msg['result_path'], 'r')
+pre_file = open(path_msg['mcu_pre_path'], 'r', encoding='utf-8')
+isp_file = open(path_msg['isp_path'], 'w')
 target_line = 9
 
 # 读取结果文件和应该写入mcu.c的文件，并根据读到的result对后者进行修改后写入
