@@ -40,7 +40,7 @@ t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 cursor = db.cursor()
 
 # SQL查询id
-sql1 = "SELECT `cate_id` FROM `books_cate` WHERE `name` = %s" % n
+sql1 = "SELECT `cate_id` FROM `books_category` WHERE `name` = %s" % n
 try:
     # 执行sql语句
     cursor.execute(sql1)
@@ -52,14 +52,26 @@ try:
 except Exception:
     print("Error:unable to insert data")
 
-# SQL 插入语句
-sql2 = "INSERT INTO `books_count`\
-       VALUES ('%s', '%s', '1','%s')" % \
-      (cate_id, t, n)
-
+sql2 = "SELECT `parent_id` FROM `books_category` WHERE `cate_id` = %s" % cate_id
 try:
     # 执行sql语句
     cursor.execute(sql2)
+    # 获取记录列表
+    parent_id = cursor.fetchone()
+    if not parent_id:
+        print("no found")
+
+except Exception:
+    print("Error:unable to insert data")
+
+# SQL 插入语句
+sql3 = "INSERT INTO `books_count`\
+       VALUES ('%s', '%s', '1','%s','%s')" % \
+      (cate_id, t, n,parent_id)
+
+try:
+    # 执行sql语句
+    cursor.execute(sql3)
     # 提交sql事务
     db.commit()
 except Error:
