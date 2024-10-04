@@ -3,7 +3,6 @@ import time
 from networkx.classes import add_path
 
 from config import sql_msg, path_msg
-import cv2
 import paddleocr
 import pymysql
 from pymysql import Error
@@ -14,16 +13,6 @@ book_names = ['微积分', '线性代数', '数字逻辑概论', '离散数学']
 # 初始化PaddleOCR
 ocr = paddleocr.PaddleOCR()
 
-# 打开摄像头
-cap = cv2.VideoCapture(0)
-
-while cap.isOpened():
-    retval, image = cap.read()
-    cv2.imshow("Video", image)
-    cv2.imwrite(path_msg['photo_path'], image)
-    key = cv2.waitKey(1)
-    if key == 32:
-        break
 
 # 打开数据库连接
 db = pymysql.connect(host=sql_msg['my_host'],

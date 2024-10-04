@@ -11,5 +11,7 @@ path_msg = {
     "photo_path":r'..\output\book_photo.jpg',
     "result_path":r"..\output\result.txt",
     "mcu_pre_path":r"..\output\CV.txt",
-    "isp_path":r".\mcu.c"
+    "isp_path":r".\mcu.c",
+    "background_path":r"..\output\init_background.png"
 }
+
