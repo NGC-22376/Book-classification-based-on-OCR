@@ -8,8 +8,8 @@ sql_msg = {
 
 # 路径相关信息
 path_msg = {
-    "photo_path":r'C:\Users\30744\Desktop\CodeFiles\Python\Book-classification-based-on-OCR\output\book_photo.jpg',
-    "result_path":r"C:\Users\30744\Desktop\CodeFiles\Python\Book-classification-based-on-OCR\output\result.txt",
-    "mcu_pre_path":r"C:\Users\30744\Desktop\CodeFiles\Python\Book-classification-based-on-OCR\output\CV.txt",
-    "isp_path":r"C:\Users\30744\Desktop\CodeFiles\Python\Book-classification-based-on-OCR\src\mcu.c"
+    "photo_path":r'..\output\book_photo.jpg',
+    "result_path":r"..\output\result.txt",
+    "mcu_pre_path":r"..\output\CV.txt",
+    "isp_path":r".\mcu.c"
 }
