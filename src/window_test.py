@@ -3,6 +3,7 @@ import cv2
 from PIL import Image, ImageTk
 import subprocess
 from config import path_msg
+import gene_window
 
 # 创建窗口并使其居中显示
 init_window = tk.Tk()
@@ -47,8 +48,8 @@ def main_process(window, frame):
     img = tk.Label(window)
     img.place(x=800, y=0)
     show_img(frame, img)
-    subprocess.run(["python", ".\main.py"])
-    subprocess.run(["python", ".\write_into_mcu.py"])
+    subprocess.run(["python", "./main.py"])
+    subprocess.run(["python", "./write_into_mcu.py"])
 
 
 # 单本入库
@@ -93,7 +94,18 @@ def folder():
 
 
 def database():
-    pass
+    bases = tk.Toplevel()
+    bases.title("仓库")
+    bases.geometry("800x600+400+300")
+    books=gene_window.select()
+    #books=(1,"ewqewq","二九五情况呢")
+    listbox=tk.Listbox(bases, font=("宋体", 20))
+    listbox.pack(pady=10)
+
+    for item in books:
+        listbox.insert(tk.END, item)
+
+    bases.mainloop()
 
 
 # 创建Frame存放选择的按钮
