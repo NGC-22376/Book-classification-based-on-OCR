@@ -153,3 +153,5 @@ def select():
     db.close()
     results_3 = results_1+results_2
     return results_3
+
+select()

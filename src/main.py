@@ -8,11 +8,11 @@ import pymysql
 from pymysql import Error
 
 # 创建列表包括书名
-book_names = ['微积分', '线性代数', '数字逻辑概论', '离散数学']
+book_names = ['微积分', '线性代数', '离散数学', '论语', '中国近现代史纲要', '计算机组成原理与结构', '哈利·波特',
+              '朝花夕拾']
 
 # 初始化PaddleOCR
 ocr = paddleocr.PaddleOCR()
-
 
 # 打开数据库连接
 db = pymysql.connect(host=sql_msg['my_host'],
@@ -40,7 +40,7 @@ t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 cursor = db.cursor()
 
 # SQL查询id
-sql1 = "SELECT `cate_id` FROM `books_category` WHERE `name` = %s" % n
+sql1 = "SELECT `cate_id` FROM `books_category` WHERE `name` ='%s'" % n
 try:
     # 执行sql语句
     cursor.execute(sql1)
@@ -52,7 +52,7 @@ try:
 except Exception:
     print("Error:unable to insert data")
 
-sql2 = "SELECT `parent_id` FROM `books_category` WHERE `cate_id` = %s" % cate_id
+sql2 = "SELECT `parent_id` FROM `books_category` WHERE `cate_id` = '%s'" % cate_id
 try:
     # 执行sql语句
     cursor.execute(sql2)
@@ -67,7 +67,7 @@ except Exception:
 # SQL 插入语句
 sql3 = "INSERT INTO `books_count`\
        VALUES ('%s', '%s', '1','%s','%s')" % \
-      (cate_id, t, n,parent_id)
+       (cate_id, t, n, parent_id)
 
 try:
     # 执行sql语句
@@ -93,9 +93,6 @@ else:
 # 输出结果文件
 with open(path_msg["result_path"], 'w') as f:
     f.write(f"{n}")
-
-# 释放摄像头资源
-cap.release()
 
 # 关闭数据库连接
 db.close()

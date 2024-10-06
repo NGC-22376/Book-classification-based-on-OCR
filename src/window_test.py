@@ -76,7 +76,7 @@ def camera():
             show_img(frame, time_frame)
         global count
         count += 1
-        if count % 500 == 0:
+        if count % 100 == 0:
             main_process(top, frame)
         # 每隔十毫秒执行一次：获取图像并显示，模拟实时显示
         time_frame.after(10, update_pic)
