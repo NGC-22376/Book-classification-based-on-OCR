@@ -1,157 +1,123 @@
-from config import sql_msg
-import pymysql
+import tkinter as tk
+import cv2
+from PIL import Image, ImageTk
+import subprocess
+from config import path_msg
+import get_data
 
-def select():
-    # 打开数据库连接
+# 创建窗口并使其居中显示
+init_window = tk.Tk()
+init_window.title('图书分类管理系统')
 
-    db = pymysql.connect(host=sql_msg['my_host'],
-                     user=sql_msg['my_root'],
-                     password=sql_msg['my_password'],
-                     database=sql_msg['book_database'])
+screen_width = init_window.winfo_screenwidth()
+screen_height = init_window.winfo_screenheight()
+window_width = 900
+window_height = 700
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2 - 20  # 考虑到任务栏，额外-20后能使窗口位于视觉正中心
 
-    # 使用cursor()方法获取操作游标
-    cursor = db.cursor()
+init_window.geometry(f'{window_width}x{window_height}+{x}+{y}')
 
-    sql1 = "SELECT * FROM `books_count` WHERE `name` = '微积分'"
-    sql2 = "SELECT * FROM `books_count` WHERE `name` = '线性代数'"
-    sql3 = "SELECT * FROM `books_count` WHERE `name` = '论语'"
-    sql4 = "SELECT * FROM `books_count` WHERE `name` = '中国近代史纲要'"
-    sql5 = "SELECT * FROM `books_count` WHERE `name` = '计算机组成原理与结构'"
-    sql6 = "SELECT * FROM `books_count` WHERE `name` = '离散数学'"
-    sql7 = "SELECT * FROM `books_count` WHERE `name` = '哈利·波特'"
-    sql8 = "SELECT * FROM `books_count` WHERE `name` = '朝花夕拾'"
-    sql9 = ("SELECT SUM(`count`)\
-    FROM `books_count`\
-    GROUP BY `name`\
-    ORDERED BY `count_id`;")
-    sql10 = ("SELECT SUM(`count`)\
-    FROM `books_count`\
-    GROUP BY `id_2`\
-    ORDERED BY `count_id`;")
-    try:
-        # 执行sql语句
-        cursor.execute(sql1)
-        # 获取记录列表
-        result1 = cursor.fetchone()
-        if not result1:
-            insert_sql1 = "INSERT INTO `books` VALUES ('2','0','0','%s','1')" % "微积分"
-            cursor.execute(insert_sql1)
-            cursor.commit()
+# 创建带背景的标题
+background_img = ImageTk.PhotoImage(file=path_msg["background_path"])
+title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑体', 50, 'bold'), fg='white',
+                       image=background_img, compound='center')
+title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
 
-    except Exception:
-        print("Error:unable to insert data")
+# 创建用户选项：单本入库、批量入库、后台管理
+# 定义对应的按钮行为
+count = 1  # 画面更新次数的计数器，每5s归零
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql2)
-        # 获取记录列表
-        result2 = cursor.fetchone()
-        if not result2:
-            insert_sql2 = "INSERT INTO `books` VALUES ('3','0','0','%s','1')" % "线性代数"
-            cursor.execute(insert_sql2)
-            cursor.commit()
+# 图片的窗口显示
+def show_img(frame, widge):
+    # 转换显示方向，转换BGR->RGB
+    frame = cv2.flip(frame, 1)
+    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    # 显示到窗口
+    img = Image.fromarray(cv2image)
+    imgtk = ImageTk.PhotoImage(image=img)
+    widge.image = imgtk
+    widge.configure(image=imgtk)
 
-    except Exception:
-        print("Error:unable to insert data")
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql3)
-        # 获取记录列表
-        result3 = cursor.fetchone()
-        if not result3:
-            insert_sql3 = "INSERT INTO `books` VALUES ('5','0','0','%s','4')" % "论语"
-            cursor.execute(insert_sql3)
-            cursor.commit()
+# 存图-识别-显示结果
+def main_process(window, frame):
+    # 存图
+    cv2.imwrite(path_msg['photo_path'], frame)
+    # 显示被分类的图片
+    img = tk.Label(window)
+    img.place(x=800, y=0)
+    show_img(frame, img)
+    subprocess.run(["python", "./classify.py"])
+    subprocess.run(["python", "./write_into_mcu.py"])
 
-    except Exception:
-        print("Error:unable to insert data")
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql4)
-        # 获取记录列表
-        result4 = cursor.fetchone()
-        if not result4:
-            insert_sql4 = "INSERT INTO `books` VALUES ('6','0','0','%s','4')" % "中国近代史纲要"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+# 单本入库
+def camera():
+    # 隐藏菜单窗口
+    init_window.withdraw()
 
-    except Exception:
-        print("Error:unable to insert data")
+    # 创建新窗口
+    top = tk.Toplevel()
+    top.title("摄像头-逐本入库")
+    top.geometry(f'{screen_width}x{screen_height}+{0}+{0}')
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql5)
-        # 获取记录列表
-        result5 = cursor.fetchone()
-        if not result5:
-            insert_sql5 = "INSERT INTO `books` VALUES ('8','0','0','%s','7')" % "计算机组成原理与结构"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+    # 获取摄像头，并设置其分辨率为适应窗口的尺寸
+    cap = cv2.VideoCapture(0)
 
-    except Exception:
-        print("Error:unable to insert data")
+    # 创建组件，包括摄像头画面
+    time_frame = tk.Label(top)
+    time_frame.place(x=0, y=0)
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql6)
-        # 获取记录列表
-        result6 = cursor.fetchone()
-        if not result6:
-            insert_sql6 = "INSERT INTO `books` VALUES ('9','0','0','%s','7')" % "离散数学"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+    # 定义获取摄像头画面的局部函数
+    def update_pic():
+        # 获取每帧
+        ret, frame = cap.read()
+        if ret:
+            show_img(frame, time_frame)
+        global count
+        count += 1
+        if count % 100 == 0:
+            main_process(top, frame)
+        # 每隔十毫秒执行一次：获取图像并显示，模拟实时显示
+        time_frame.after(10, update_pic)
 
-    except Exception:
-        print("Error:unable to insert data")
+    # 启动画面更新
+    update_pic()
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql7)
-        # 获取记录列表
-        result7 = cursor.fetchone()
-        if not result7:
-            insert_sql7 = "INSERT INTO `books` VALUES ('11','0','0','%s','10')" % "哈利·波特"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+    # 结束后，显示菜单窗口
+    init_window.deiconify()
 
-    except Exception:
-        print("Error:unable to insert data")
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql8)
-        # 获取记录列表
-        result8 = cursor.fetchone()
-        if not result8:
-            insert_sql4 = "INSERT INTO `books` VALUES ('12','0','0','%s','10')" % "朝花夕拾"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+def folder():
+    pass
 
-    except Exception:
-        print("Error:unable to insert data")
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql10)
-        # 获取所有记录列表
-        results_1 = cursor.fetchall()
-    except Exception:
-        print("Error:unable to fetch data")
+def database():
+    bases = tk.Toplevel()
+    bases.title("仓库")
+    bases.geometry("800x600+400+300")
+    books=get_data.get_data()
+    #books=(1,"ewqewq","二九五情况呢")
+    listbox=tk.Listbox(bases, font=("宋体", 20))
+    listbox.pack(pady=10)
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql9)
-        # 获取所有记录列表
-        results_2 = cursor.fetchall()
-    except Exception:
-        print("Error:unable to fetch data")
+    for item in books:
+        listbox.insert(tk.END, item)
 
-    # 关闭数据库
-    cursor.close()
-    db.close()
-    results_3 = results_1+results_2
-    return results_3
+    bases.mainloop()
 
-select()
+
+# 创建Frame存放选择的按钮
+buttons = tk.Frame(init_window)
+buttons.place(x=0, y=int(window_height * 0.8))
+# 创建按钮，规定为从左到右排列
+button1 = tk.Button(buttons, text="单本入库", font=("黑体", 30), command=camera)
+button2 = tk.Button(buttons, text="批量入库", font=("黑体", 30), command=folder)
+button3 = tk.Button(buttons, text="查看仓库", font=("黑体", 30), command=database)
+button1.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+
+# 启动循环
+init_window.mainloop()
