@@ -7,7 +7,7 @@ isp_file = open(path_msg['isp_path'], 'w')
 target_line = 9
 
 # 读取结果文件和应该写入mcu.c的文件，并根据读到的result对后者进行修改后写入
-result = res_file.read(1)
+result, _, _ = res_file.read()
 pretext = pre_file.readlines()
 pretext[target_line] = 'unsigned char timer1=' + result + ';' + '\n'
 

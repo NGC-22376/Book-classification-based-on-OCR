@@ -58,7 +58,8 @@ def main_process_in_thread(window, frame, widget):
         cv2.imwrite(path_msg['photo_path'], frame)
         show_img(path_msg["photo_path"], widget)
         subprocess.run(["python", r".\classify.py"])
-        subprocess.run(["python", r".\write_into_mcu.py"])
+        subprocess.run(["python", r".\mcu_top_class.py"])
+        subprocess.run(["python", r".\mcu_sub_class.py"])
         show_result(window)
 
     threading.Thread(target=process).start()
