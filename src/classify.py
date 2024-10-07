@@ -16,18 +16,16 @@ db = pymysql.connect(host=sql_msg['my_host'],
 result = ocr.ocr(path_msg['photo_path'], cls=True)
 
 m = None
-n = 'NULL'
+n = None
+book_to_category = {book: category for category, books in book_names.items() for book in books}
 for line in result:
     for word in line:
         text = word[1][0]
-        for category in book_names.keys():
-            for books in book_names.values():
-                for book in books:
-                    if book in text:
-                        n = book
-                        m = category
-                    if n:
-                        break
+        for book, category in book_to_category.items():
+            if book in text:
+                n = book
+                m = category
+                break
         if n:
             break
     if n:
