@@ -1,6 +1,5 @@
 from config import path_msg
 
-
 # 打开目标文件
 res_file = open(path_msg['result_path'], 'r')
 pre_file = open(path_msg['mcu_pre_path'], 'r', encoding='utf-8')

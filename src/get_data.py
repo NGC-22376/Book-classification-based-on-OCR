@@ -1,13 +1,14 @@
 from config import sql_msg
 import pymysql
 
+
 def get_data():
     # 打开数据库连接
 
     db = pymysql.connect(host=sql_msg['my_host'],
-                     user=sql_msg['my_root'],
-                     password=sql_msg['my_password'],
-                     database=sql_msg['book_database'])
+                         user=sql_msg['my_root'],
+                         password=sql_msg['my_password'],
+                         database=sql_msg['book_database'])
 
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
@@ -151,5 +152,5 @@ def get_data():
     # 关闭数据库
     cursor.close()
     db.close()
-    results_3 = results_1+results_2
+    results_3 = results_1 + results_2
     return results_3

@@ -1,34 +1,10 @@
 import time
-import cv2
 import paddleocr
 import pymysql
-from networkx.classes import add_path
-
-from config import sql_msg, path_msg
+from config import sql_msg, path_msg, book_names
 from pymysql import Error
 
-book_names = {
-    '数理基础类': ['微积分', '线性代数'],
-    '历史哲学类': ['论语', '中国近代史纲要'],
-    '计算机专业类': ['计算机组成原理与结构', '离散数学'],
-    '小说文学类': ['哈利·波特', '朝花夕拾']
-}
 
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-
-last_capture_time = time.time()
-while True:
-    retval, image = cap.read()
-    cv2.imshow("Video", image)
-    current_time = time.time()
-    if current_time - last_capture_time >= 5:
-        cv2.imwrite(path_msg['photo_path'], image)
-        last_capture_time = current_time
-    key = cv2.waitKey(1)
-    if key == 32:
-        break
 
 ocr = paddleocr.PaddleOCR()
 
@@ -61,7 +37,7 @@ t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 cursor = db.cursor()
 
 # SQL查询id
-sql1 = "SELECT `cate_id` FROM `books_cate` WHERE `name` = %s" % n
+sql1 = "SELECT `cate_id` FROM `books_category` WHERE `name` = '%s'" % n
 try:
     # 执行sql语句
     cursor.execute(sql1)
@@ -76,7 +52,7 @@ except Exception:
 # SQL 插入语句
 sql2 = "INSERT INTO `books_count`\
        VALUES ('%s', '%s', '1','%s')" % \
-      (cate_id, t, n)
+       (cate_id, t, n)
 
 try:
     # 执行sql语句
@@ -102,7 +78,7 @@ if m == '历史哲学类类':
         n = 1
 if m == '计算机专业类':
     m = 2
-    if n == '计算机组成原理与结构':
+    if n == '计算机组成与系统结构':
         n = 0
     elif n == '离散数学':
         n = 1
@@ -113,10 +89,8 @@ if m == '小说文学类':
     elif n == '朝花夕拾':
         n = 1
 
-
 # 输出结果文件
 with open(path_msg["result_path"], 'w') as f:
-    f.write(f"{n}")
+    f.write(f"{m}\n{n}")
 
-cap.release()
 db.close()
