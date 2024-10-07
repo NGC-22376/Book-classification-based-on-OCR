@@ -20,16 +20,19 @@ n = 'NULL'
 for line in result:
     for word in line:
         text = word[1][0]
-        for category, books in book_names.items():
-            for book in books:
-                if book in text:
-                    n = book
-                    m = category
-                    break
-            if n:
-                break
+        for category in book_names.keys():
+            for books in book_names.values():
+                for book in books:
+                    if book in text:
+                        n = book
+                        m = category
+                    if n:
+                        break
         if n:
             break
+    if n:
+        break
+
 
 t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
