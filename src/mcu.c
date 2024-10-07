@@ -7,7 +7,7 @@ sfr ISP_CONTR  = 0xE7;
 //中断计数器
 unsigned char count=0;
 //PWM信号一个周期内高电平时间和总时间，乘0.5ms
-unsigned char timer1=3;
+unsigned char timer1=1;
 unsigned char time_all = 40;
 //复位计数器
 unsigned char loop = 0;

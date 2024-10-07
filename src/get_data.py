@@ -23,11 +23,11 @@ def get_data():
     sql9 = ("SELECT SUM(`count`)\
     FROM `books_count`\
     GROUP BY `name`\
-    ORDERED BY `count_id`;")
+    ORDER BY `count_id`;")
     sql10 = ("SELECT SUM(`count`)\
     FROM `books_count`\
     GROUP BY `id_2`\
-    ORDERED BY `count_id`;")
+    ORDER BY `count_id`;")
     try:
         # 执行sql语句
         cursor.execute(sql1)
