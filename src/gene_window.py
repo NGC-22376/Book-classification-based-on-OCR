@@ -60,6 +60,23 @@ def main_process_in_thread(window, frame, widget):
         subprocess.run(["python", r".\classify.py"])
         subprocess.run(["python", r".\mcu_top_class.py"])
         subprocess.run(["python", r".\mcu_sub_class.py"])
+        # 启动单片机
+        keil_command = [
+            path_msg["keil_path"],  # Keil 编译器路径
+            "-b", path_msg["mcu_proj_path"],  # 项目文件路径
+            "-o", path_msg["output_log_path"]  # 输出日志文件路径
+        ]
+
+        # 调用 Keil 编译器
+        try:
+            result = subprocess.run(keil_command, check=True, capture_output=True, text=True)
+            print("编译成功")
+            print("输出日志:")
+            print(result.stdout)
+        except subprocess.CalledProcessError as e:
+            print(f"编译失败，错误码: {e.returncode}")
+            print("错误输出:")
+            print(e.stderr)
         show_result(window)
 
     threading.Thread(target=process).start()
@@ -125,12 +142,27 @@ def database():
     bases = tk.Toplevel()
     bases.title("仓库")
     bases.geometry("800x600+400+300")
-    books = get_data.get_data()
-    listbox = tk.Listbox(bases, font=("宋体", 20))
-    listbox.pack(pady=10)
+    book = get_data.select()
+    books = ((range(1, len(book[1]))), book)
+    # 测试用books=((1,2,3),("离散数学","微积分","ewq"),(15,18,2))
+    label_1 = tk.Label(bases, text="ID", font=("宋体", 20))
+    label_2 = tk.Label(bases, text="Names", font=("宋体", 20))
+    label_3 = tk.Label(bases, text="Numbers", font=("宋体", 20))
+    listbox_1 = tk.Listbox(bases, font=("宋体", 20), width=15)
+    listbox_2 = tk.Listbox(bases, font=("宋体", 20), width=15)
+    listbox_3 = tk.Listbox(bases, font=("宋体", 20), width=15)
 
-    for item in books:
-        listbox.insert(tk.END, item)
+    label_1.grid(row=0, column=0, padx=10, pady=10, sticky='ew')
+    label_2.grid(row=0, column=1, padx=10, pady=10, sticky='ew')
+    label_3.grid(row=0, column=2, padx=10, pady=10, sticky='ew')
+    listbox_1.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+    listbox_2.grid(row=1, column=1, padx=10, pady=10, sticky='nsew')
+    listbox_3.grid(row=1, column=2, padx=10, pady=10, sticky='nsew')
+
+    for i in range(len(books[0])):
+        listbox_1.insert(tk.END, books[0][i])
+        listbox_2.insert(tk.END, books[1][i])
+        listbox_3.insert(tk.END, books[2][i])
 
     bases.mainloop()
 
