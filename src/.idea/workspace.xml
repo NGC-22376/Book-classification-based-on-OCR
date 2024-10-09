@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="63e3edcc-4957-4093-8f89-ec5dbd9642dd" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gene_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/gene_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
