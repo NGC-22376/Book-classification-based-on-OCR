@@ -1,11 +1,14 @@
-import threading
+import concurrent.futures
+import time
 import tkinter as tk
 import cv2
 import numpy
 from PIL import Image, ImageTk
 import subprocess
 
-from config import path_msg, book_names, book_classes
+from pyexpat import features
+
+from config import path_msg, book_names, book_classes, interval
 import get_data
 
 # 创建窗口并使其居中显示
@@ -27,13 +30,25 @@ title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑�
 title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
 
 
+# 计时器
+def clock(window):
+    clock_label = tk.Label(window, text="开始计时", font={'黑体', 20, 'bold'})
+    clock_label.place(x=400, y=500)
+    for i in range(interval, 0, -1):
+        clock_label.config(text=f"下一次拍照:{i}秒后")
+        time.sleep(1)
+
+
 # 显示图像
-def show_img(frame, widget):
-    if isinstance(frame, numpy.ndarray):
+def show_img(frame, widget, opt_code):
+    # 实时帧显示
+    if opt_code == 0:
         # 将OpenCV的BGR帧转换为RGB格式
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(cv2image)
+    # 被分类的图片保存与显示
     else:
+        cv2.imwrite(path_msg['photo_path'], frame)
         img = Image.open(frame)
     # 转换为Tkinter的PhotoImage对象
     imgtk = ImageTk.PhotoImage(image=img)
@@ -41,7 +56,17 @@ def show_img(frame, widget):
     widget.image = imgtk  # 防止图片被垃圾回收
 
 
-# 显示分类结果
+# 实时画面显示（左上角窗口）
+def update_pic(cap, widget):
+    ret, frame = cap.read()
+    if ret:
+        show_img(frame, widget, 0)
+    # 每10ms运行一次，模拟实时显示
+    widget.after(10, update_pic, cap, widget)
+    return frame
+
+
+# 显示分类结果（右下角窗口）
 def show_result(window):
     result_file = open(path_msg["result_path"], "r")
     top_class, _, sub_class = result_file.read()
@@ -52,44 +77,44 @@ def show_result(window):
     result_file.close()
 
 
-# 存图、识别并显示结果
-def main_process_in_thread(window, frame, widget):
-    def process():
-        cv2.imwrite(path_msg['photo_path'], frame)
-        show_img(path_msg["photo_path"], widget)
-        subprocess.run(["python", r".\classify.py"])
-        subprocess.run(["python", r".\mcu_top_class.py"])
-        subprocess.run(["python", r".\mcu_sub_class.py"])
-        # 启动单片机
-        keil_command = [
-            path_msg["keil_path"],  # Keil 编译器路径
-            "-b", path_msg["mcu_proj_path"],  # 项目文件路径
-            "-o", path_msg["output_log_path"]  # 输出日志文件路径
-        ]
-
-        # 调用 Keil 编译器
-        try:
-            result = subprocess.run(keil_command,check=True, capture_output=True, text=True,shell=True)
-            print("编译成功")
-            print("输出日志:")
-            print(result.stdout)
-        except subprocess.CalledProcessError as e:
-            print(f"编译失败，错误码: {e.returncode}")
-            print("错误输出:")
-            print(e.stderr)
-        show_result(window)
-
-    threading.Thread(target=process).start()
+# 识别并显示结果
+def main_process(window):
+    # 进行分类识别，并将分类结果写入对应文件
+    subprocess.run(["python", r".\classify.py"])
+    subprocess.run(["python", r".\mcu_top_class.py"])
+    subprocess.run(["python", r".\mcu_sub_class.py"])
+    # 启动单片机
+    keil_command = [
+        path_msg["keil_path"],  # Keil 编译器路径
+        "-b", path_msg["mcu_proj_path"],  # 项目文件路径
+        "-o", path_msg["output_log_path"]  # 输出日志文件路径
+    ]
+    # 调用 Keil 编译器
+    try:
+        result = subprocess.run(keil_command, check=True, capture_output=True, text=True, shell=True)
+        print("编译成功")
+        print("输出日志:")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"编译失败，错误码: {e.returncode}")
+        print("错误输出:")
+        print(e.stderr)
+    # 在窗口显示本次分类结果
+    show_result(window)
 
 
-# 每5秒调用main_process
-def periodic_call(window, cap, widget, running_flag):
-    if not running_flag["run"]:
-        return  # 如果标志为False，停止调用
-    ret, frame = cap.read()
-    if ret:
-        main_process_in_thread(window, frame, widget)
-    window.after(5000, periodic_call, window, cap, widget, running_flag)
+# 创建所有后台线程并执行
+def all_threading(sub_window, img_to_classify, img_label):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # 定时器，显示拍照倒计时
+        clock_res = executor.submit(clock, sub_window)
+        # 定时结束之后，拍照并显示在右侧相框
+        clock_res.result()
+        executor.submit(show_img, img_to_classify, img_label, 1)
+        # 执行分类和单片机交互操作
+        executor.submit(main_process, sub_window)  # 显示右下角分类结果
+
+    sub_window.after(interval * 1000, all_threading, sub_window, img_to_classify, img_label)
 
 
 # 单本入库
@@ -103,34 +128,24 @@ def camera():
 
     # 获取摄像头
     cap = cv2.VideoCapture(0)
-    time_frame = tk.Label(top)
-    time_frame.place(x=0, y=0)
-    result_label = tk.Label(top)
-    result_label.place(x=800, y=0)
 
-    # 运行状态的标志，用于控制定时任务
-    running_flag = {"run": True}
+    # 创建放置实时画面和被分类图片的组件
+    img_update_label = tk.Label(top)
+    img_update_label.place(x=0, y=0)
+    img_tobe_classify_label = tk.Label(top)
+    img_tobe_classify_label.place(x=800, y=0)
 
-    # 更新图像显示
-    def update_pic():
-        ret, frame = cap.read()
-        if ret:
-            show_img(frame, time_frame)
-        time_frame.after(10, update_pic)
+    # 实时显示图像
+    frame = update_pic(cap, img_update_label)
 
-    # 启动画面更新
-    update_pic()
+    # 运行主线程
+    all_threading(top, frame, img_tobe_classify_label)
 
-    # 定时任务：每隔5秒调用
-    periodic_call(top, cap, result_label, running_flag)
-
-    # 关闭窗口时，释放摄像头资源并停止定时任务
-    def on_closing():
-        running_flag["run"] = False  # 设置标志为False以停止任务
+    # 关闭窗口时，释放摄像头资源
+    def on_closing():  # 设置标志为False以停止任务
         cap.release()
         top.destroy()
         init_window.deiconify()
-
 
     top.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -143,7 +158,7 @@ def database():
     bases = tk.Toplevel()
     bases.title("仓库")
     bases.geometry("800x600+400+300")
-    book = get_data.select()
+    book = get_data.get_data()
     books = ((range(1, len(book[1]))), book)
     # 测试用books=((1,2,3),("离散数学","微积分","ewq"),(15,18,2))
     label_1 = tk.Label(bases, text="ID", font=("宋体", 20))
@@ -179,4 +194,3 @@ button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.0
 button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
 
 init_window.mainloop()
-
