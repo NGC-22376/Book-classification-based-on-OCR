@@ -14,7 +14,7 @@ path_msg = {
     "mcu_pre_path": r"..\output\CV.txt",
     "isp_path": r".\mcu.c",
     "background_path": r"..\output\init_background.png",
-    "keil_path":r"C:\Keil9.6.1\UV4",
+    "keil_path":r"C:\Keil9.6.1\UV4\UV4.exe",
     "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\code.uvproj",
     "mcu_obj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
 }

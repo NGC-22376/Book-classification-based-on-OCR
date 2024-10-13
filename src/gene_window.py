@@ -131,7 +131,7 @@ def camera():
         top.destroy()
         init_window.deiconify()
 
-<<<<<<< Updated upstream
+
     top.protocol("WM_DELETE_WINDOW", on_closing)
 
 
@@ -179,11 +179,4 @@ button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.0
 button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
 
 init_window.mainloop()
-=======
-    # 关闭数据库
-    cursor.close()
-    db.close()
-    results_3 = results_1+results_2
-    return results_3
->>>>>>> Stashed changes
 
