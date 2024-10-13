@@ -28,4 +28,4 @@ book_names = {
 }
 
 # 拍照间隔(s)
-interval = 15
+interval = 30

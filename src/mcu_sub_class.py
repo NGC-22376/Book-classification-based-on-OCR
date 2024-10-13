@@ -19,3 +19,5 @@ for i in range(0, len(pretext)):
 res_file.close()
 pre_file.close()
 isp_file.close()
+
+print("二级分类写入完成")
