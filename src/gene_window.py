@@ -6,7 +6,6 @@ import cv2
 from PIL import Image, ImageTk
 import subprocess
 
-
 from config import path_msg, book_names, book_classes, interval
 import get_data
 
@@ -27,7 +26,6 @@ background_img = ImageTk.PhotoImage(file=path_msg["background_path"])
 title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑体', 50, 'bold'), fg='white',
                        image=background_img, compound='center')
 title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
-
 
 
 # 计时器: 使用Tkinter的after方法来避免阻塞
@@ -59,6 +57,8 @@ def show_img(frame, widget, opt_code):
 
 # 实时画面显示（左上角窗口）
 global img_to_classify
+
+
 def update_pic(cap, widget):
     global img_to_classify
     ret, img_to_classify = cap.read()
@@ -140,7 +140,7 @@ def all_threading(sub_window, img_label):
     clock(sub_window, clock_label, interval)  # 使用计时器
 
     # 使用非阻塞的Tkinter方法显示图片和执行分类
-    sub_window.after(interval * 1000, lambda:show_img(img_to_classify, img_label, 1))
+    sub_window.after(interval * 1000, lambda: show_img(img_to_classify, img_label, 1))
     threading.Thread(target=main_process, args=(sub_window,)).start()
 
     sub_window.after(interval * 1000, lambda: all_threading(sub_window, img_label))
@@ -169,7 +169,7 @@ def camera():
     update_pic(cap, img_update_label)
 
     # 运行主线程
-    all_threading(top,img_tobe_classify_label)
+    all_threading(top, img_tobe_classify_label)
 
     # 关闭窗口时，释放摄像头资源
     def on_closing():

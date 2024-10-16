@@ -23,21 +23,21 @@ def get_data():
     sql8 = "SELECT * FROM `books_count` WHERE `name` = '朝花夕拾'"
     sql9 = ("SELECT SUM(`count`)\
     FROM `books_count`\
-    GROUP BY `name`\
+    GROUP BY `count_id`\
     ORDER BY `count_id`;")
     sql10 = ("SELECT SUM(`count`)\
     FROM `books_count`\
     GROUP BY `id_2`\
-    ORDER BY `count_id`;")
+    ORDER BY `id_2`;")
     try:
         # 执行sql语句
         cursor.execute(sql1)
         # 获取记录列表
         result1 = cursor.fetchone()
         if not result1:
-            insert_sql1 = "INSERT INTO `books` VALUES ('2','0','0','%s','1')" % "微积分"
+            insert_sql1 = "INSERT INTO `books_count` VALUES (2,'0',0,'微积分',1)"
             cursor.execute(insert_sql1)
-            cursor.commit()
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -48,7 +48,7 @@ def get_data():
         # 获取记录列表
         result2 = cursor.fetchone()
         if not result2:
-            insert_sql2 = "INSERT INTO `books` VALUES ('3','0','0','%s','1')" % "线性代数"
+            insert_sql2 = "INSERT INTO `books_count` VALUES (3,'0',0,'%s',1)" % "线性代数"
             cursor.execute(insert_sql2)
             cursor.commit()
 
@@ -61,9 +61,9 @@ def get_data():
         # 获取记录列表
         result3 = cursor.fetchone()
         if not result3:
-            insert_sql3 = "INSERT INTO `books` VALUES ('5','0','0','%s','4')" % "论语"
+            insert_sql3 = "INSERT INTO `books_count` VALUES (5,'0',0,'%s',4)" % "论语"
             cursor.execute(insert_sql3)
-            cursor.commit()
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -74,9 +74,9 @@ def get_data():
         # 获取记录列表
         result4 = cursor.fetchone()
         if not result4:
-            insert_sql4 = "INSERT INTO `books` VALUES ('6','0','0','%s','4')" % "中国近代史纲要"
+            insert_sql4 = "INSERT INTO `books_count` VALUES (6,'0',0,'%s',4)" % "中国近代史纲要"
             cursor.execute(insert_sql4)
-            cursor.commit()
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -87,9 +87,9 @@ def get_data():
         # 获取记录列表
         result5 = cursor.fetchone()
         if not result5:
-            insert_sql5 = "INSERT INTO `books` VALUES ('8','0','0','%s','7')" % "计算机组成原理与结构"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+            insert_sql5 = "INSERT INTO `books_count` VALUES (8,'0',0,'%s',7)" % "计算机组成原理与结构"
+            cursor.execute(insert_sql5)
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -100,9 +100,9 @@ def get_data():
         # 获取记录列表
         result6 = cursor.fetchone()
         if not result6:
-            insert_sql6 = "INSERT INTO `books` VALUES ('9','0','0','%s','7')" % "离散数学"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+            insert_sql6 = "INSERT INTO `books_count` VALUES (9,'0',0,'%s',7)" % "离散数学"
+            cursor.execute(insert_sql6)
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -113,9 +113,9 @@ def get_data():
         # 获取记录列表
         result7 = cursor.fetchone()
         if not result7:
-            insert_sql7 = "INSERT INTO `books` VALUES ('11','0','0','%s','10')" % "哈利·波特"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+            insert_sql7 = "INSERT INTO `books_count` VALUES (11,'0',0,'%s',10)" % "哈利·波特"
+            cursor.execute(insert_sql7)
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
@@ -126,9 +126,9 @@ def get_data():
         # 获取记录列表
         result8 = cursor.fetchone()
         if not result8:
-            insert_sql4 = "INSERT INTO `books` VALUES ('12','0','0','%s','10')" % "朝花夕拾"
-            cursor.execute(insert_sql4)
-            cursor.commit()
+            insert_sql8 = "INSERT INTO `books_count` VALUES (12,'0',0,'%s',10)" % "朝花夕拾"
+            cursor.execute(insert_sql8)
+            db.commit()
 
     except Exception:
         print("Error:unable to insert data")
