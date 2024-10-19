@@ -6,6 +6,7 @@ import cv2
 from PIL import Image, ImageTk
 import subprocess
 
+import config
 from config import path_msg, book_names, book_classes, interval
 import get_data
 
@@ -188,28 +189,52 @@ def database():
     bases = tk.Toplevel()
     bases.title("仓库")
     bases.geometry("800x600+400+300")
-    book = get_data.get_data()
-    books = ((range(1, len(book[1]))), book)
-    # 测试用books=((1,2,3),("离散数学","微积分","ewq"),(15,18,2))
-    label_1 = tk.Label(bases, text="ID", font=("宋体", 20))
-    label_2 = tk.Label(bases, text="Names", font=("宋体", 20))
-    label_3 = tk.Label(bases, text="Numbers", font=("宋体", 20))
-    listbox_1 = tk.Listbox(bases, font=("宋体", 20), width=15)
-    listbox_2 = tk.Listbox(bases, font=("宋体", 20), width=15)
-    listbox_3 = tk.Listbox(bases, font=("宋体", 20), width=15)
+    num_book = get_data.get_data()
+    #num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
+    book_id=range(1,12)
+    book_names=config.book_names
+    #展平数据
+    flattened_num = [row[0] for row in num_book]
+    book_numbers = {
+        '数理基础类': flattened_num[2:4],
+        '历史哲学类': flattened_num[5:7],
+        '计算机专业类': flattened_num[8:10],
+        '小说文学类': flattened_num[11:13]
+    }
+    listboxes = []
 
-    label_1.grid(row=0, column=0, padx=10, pady=10, sticky='ew')
-    label_2.grid(row=0, column=1, padx=10, pady=10, sticky='ew')
-    label_3.grid(row=0, column=2, padx=10, pady=10, sticky='ew')
-    listbox_1.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
-    listbox_2.grid(row=1, column=1, padx=10, pady=10, sticky='nsew')
-    listbox_3.grid(row=1, column=2, padx=10, pady=10, sticky='nsew')
+    for i, (key, books) in enumerate(book_names.items()):
+        frame = tk.Frame(bases)
+        frame.grid(row=0, column=i, padx=10, pady=10, sticky="nsew")
 
-    for i in range(len(books[0])):
-        listbox_1.insert(tk.END, books[0][i])
-        listbox_2.insert(tk.END, books[1][i])
-        listbox_3.insert(tk.END, books[2][i])
+        bases.columnconfigure(i, weight=1)
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
 
+        label = tk.Label(frame, text=key)
+        label.grid(row=0, column=0, sticky="w")
+
+        listbox = tk.Listbox(frame)
+        listbox.grid(row=1, column=0, sticky="nsew")
+
+        numbers = book_numbers[key]
+
+        total_number = 0
+        for book, number in zip(books, numbers):
+            listbox.insert(tk.END, f"{book} - {number}")
+            total_number += number
+
+        listbox.insert(tk.END, f"Total number: {total_number}")
+
+        # 存储 Listbox 控件
+        listboxes.append(listbox)
+
+    # 设置主窗口的权重，使其可以调整大小
+    for i in range(len(book_names)):
+        bases.columnconfigure(i, weight=1)
+    bases.rowconfigure(0, weight=1)
+
+    # 运行主循环
     bases.mainloop()
 
 
