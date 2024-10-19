@@ -86,9 +86,12 @@ def main_process(window):
     print("主线函数")
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         # 进行分类识别，并将分类结果写入对应文件
-        executor.submit(subprocess.run, ["python", r".\classify.py"])
-        executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
-
+        future1=executor.submit(subprocess.run, ["python", r".\classify.py"])
+        future2=executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
+        #等待分类完成后显示分类结果
+        future1.result()
+        future2.result()
+        show_result(window)
         # 等待写入完成再执行操作(一级分类)
         time.sleep(2)
         print("单片机启动-即将进行一级分类")
@@ -125,8 +128,6 @@ def main_process(window):
             print(f"编译失败，错误码: {e.returncode}")
             print("错误输出:")
             print(e.stderr)
-        # 在窗口显示本次分类结果
-        show_result(window)
         # 等待烧录完成后继续执行
         time.sleep(5)
 
