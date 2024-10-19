@@ -189,8 +189,8 @@ def database():
     bases = tk.Toplevel()
     bases.title("仓库")
     bases.geometry("800x600+400+300")
-    #num_book = get_data.get_data()
-    num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
+    num_book = get_data.get_data()
+    #num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
     book_id=range(1,12)
     book_names=config.book_names
     #展平数据
