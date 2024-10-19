@@ -189,16 +189,16 @@ def database():
     bases = tk.Toplevel()
     bases.title("仓库")
     bases.geometry("800x600+400+300")
-    num_book = get_data.get_data()
-    #num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
+    #num_book = get_data.get_data()
+    num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
     book_id=range(1,12)
     book_names=config.book_names
     #展平数据
     flattened_num = [row[0] for row in num_book]
     book_numbers = {
-        '数理基础类': flattened_num[2:4],
-        '历史哲学类': flattened_num[5:7],
-        '计算机专业类': flattened_num[8:10],
+        '数理基础类': flattened_num[5:7],
+        '历史哲学类': flattened_num[7:9],
+        '计算机专业类': flattened_num[9:11],
         '小说文学类': flattened_num[11:13]
     }
     listboxes = []
@@ -211,10 +211,10 @@ def database():
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
 
-        label = tk.Label(frame, text=key)
+        label = tk.Label(frame, text=key,font=("黑体", 10))
         label.grid(row=0, column=0, sticky="w")
 
-        listbox = tk.Listbox(frame)
+        listbox = tk.Listbox(frame,font=("黑体", 10))
         listbox.grid(row=1, column=0, sticky="nsew")
 
         numbers = book_numbers[key]
