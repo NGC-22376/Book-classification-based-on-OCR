@@ -21,14 +21,7 @@ def get_data():
     sql6 = "SELECT * FROM `books_count` WHERE `name` = '离散数学'"
     sql7 = "SELECT * FROM `books_count` WHERE `name` = '哈利·波特'"
     sql8 = "SELECT * FROM `books_count` WHERE `name` = '朝花夕拾'"
-    sql9 = ("SELECT SUM(`count`)\
-    FROM `books_count`\
-    GROUP BY `count_id`\
-    ORDER BY `count_id`;")
-    sql10 = ("SELECT SUM(`count`)\
-    FROM `books_count`\
-    GROUP BY `id_2`\
-    ORDER BY `id_2`;")
+
     try:
         # 执行sql语句
         cursor.execute(sql1)
@@ -133,24 +126,32 @@ def get_data():
     except Exception:
         print("Error:unable to insert data")
 
-    try:
-        # 执行sql语句
-        cursor.execute(sql10)
-        # 获取所有记录列表
-        results_1 = cursor.fetchall()
-    except Exception:
-        print("Error:unable to fetch data")
+    sql9 = """
+    SELECT id_2, count_id, SUM(count) as count_per_id
+    FROM books_count
+    GROUP BY id_2, count_id
+    ORDER BY id_2, count_id;
+    """
 
     try:
         # 执行sql语句
         cursor.execute(sql9)
         # 获取所有记录列表
-        results_2 = cursor.fetchall()
+        results = cursor.fetchall()
     except Exception:
         print("Error:unable to fetch data")
 
     # 关闭数据库
     cursor.close()
     db.close()
-    results_3 = results_1 + results_2
-    return results_3
+
+    result_dict = {}
+    for row in results:
+        id_2, count_id, count_per_id = row
+        if id_2 not in result_dict:
+            result_dict[id_2] = []
+        result_dict[id_2].append(count_per_id)
+
+    final_result = tuple(tuple(counts) for counts in result_dict.values())
+    return final_result
+
