@@ -8,10 +8,12 @@ import cv2
 from PIL import Image, ImageTk
 import subprocess
 from config import path_msg, book_names, book_classes, interval
+import classify
 import get_data
 
+
 # 工具函数
-def get_info(entry):
+def get_info(entry, top):
     """
     批量入库的按钮绑定事件
     :param entry: 需要获取输入的文本框
@@ -22,11 +24,12 @@ def get_info(entry):
         messagebox.showerror(title="ERROR", message="文件夹路径不合法")
     else:
         messagebox.showinfo(title="提示", message="正在分类中，这需要一些时间\n分类结束后将弹窗提醒您")
-        # with open(info, 'r') as f:
-        #     img_files = os.listdir(info)
-        #     for img in img_files:
-        #         classify.classify(img)
-        messagebox.showinfo(title="提示", message="分类完成\n感谢您的使用！")
+        img_files = os.listdir(info)
+        for img in img_files:
+            img = os.path.join(info, img)
+            classify.classify(img)
+    messagebox.showinfo(title="提示", message="分类完成\n感谢您的使用！")
+    top.destroy()
 
 
 def clock(window, clock_label, remaining_time):
@@ -69,6 +72,8 @@ def show_img(frame, widget, opt_code):
 
 
 global img_to_classif
+
+
 def update_pic(cap, widget):
     """
     实时画面显示（左上角窗口）
@@ -100,7 +105,7 @@ def show_result(window):
     result_file.close()
 
 
-def main_process(window):
+def main_process(window, img):
     """
     识别并显示结果
     :param window: 单本入库的窗口
@@ -109,10 +114,9 @@ def main_process(window):
     print("主线函数")
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         # 进行分类识别，并将分类结果写入对应文件
-        future1 = executor.submit(subprocess.run, ["python", r".\classify.py"])
+        classify.classify(img)
         future2 = executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
         # 等待分类完成后显示分类结果
-        future1.result()
         future2.result()
         show_result(window)
         # 等待写入完成再执行操作(一级分类)
@@ -171,9 +175,10 @@ def all_threading(sub_window, img_label):
 
     # 使用非阻塞的Tkinter方法显示图片和执行分类
     sub_window.after(interval * 1000, lambda: show_img(img_to_classify, img_label, 1))
-    threading.Thread(target=main_process, args=(sub_window,)).start()
+    threading.Thread(target=main_process, args=(sub_window,img_to_classify)).start()
 
     sub_window.after(interval * 1000, lambda: all_threading(sub_window, img_label))
+
 
 # 创建窗口并使其居中显示
 init_window = tk.Tk()
@@ -247,8 +252,10 @@ def folder():
     user_input.pack(padx=30, pady=20, side='top', anchor='center', ipadx=5, ipady=15, fill='x')
 
     # 输入完毕后，进行之后的操作，在按钮绑定事件中完成
-    confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input))
+    confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input, top))
     confirm_button.pack(side='top', anchor='center')
+
+
 
 
 def database():
@@ -256,7 +263,7 @@ def database():
     bases.title("仓库")
     bases.geometry("800x600+400+300")
     num_book = get_data.get_data()
-    #num_book=((10,20),(15,25),(5,10),(7,9))
+    # num_book=((10,20),(15,25),(5,10),(7,9))
     num_books = {i + 1: list(t) for i, t in enumerate(num_book)}
     # num_books={  1: [10, 20], 2: [15, 25], 3: [5, 10],4:[7,9]}#测试用
     book_numbers = {
@@ -275,10 +282,10 @@ def database():
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
 
-        label = tk.Label(frame, text=key,font=("黑体", 10))
+        label = tk.Label(frame, text=key, font=("黑体", 10))
         label.grid(row=0, column=0, sticky="w")
 
-        listbox = tk.Listbox(frame,font=("黑体", 10))
+        listbox = tk.Listbox(frame, font=("黑体", 10))
         listbox.grid(row=1, column=0, sticky="nsew")
 
         numbers = book_numbers[key]
@@ -301,6 +308,7 @@ def database():
     # 运行主循环
     bases.mainloop()
 
+
 # 创建按钮
 buttons = tk.Frame(init_window)
 buttons.place(x=0, y=int(window_height * 0.8))
@@ -312,4 +320,3 @@ button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.0
 button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
 
 init_window.mainloop()
-
