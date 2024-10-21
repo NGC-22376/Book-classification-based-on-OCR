@@ -10,144 +10,7 @@ import subprocess
 from config import path_msg, book_names, book_classes, interval
 import get_data
 
-# 创建窗口并使其居中显示
-init_window = tk.Tk()
-init_window.title('图书分类管理系统')
-
-screen_width = init_window.winfo_screenwidth()
-screen_height = init_window.winfo_screenheight()
-window_width = 900
-window_height = 700
-x = (screen_width - window_width) // 2
-y = (screen_height - window_height) // 2 - 20  # 考虑到任务栏，额外-20后能使窗口位于视觉正中心
-init_window.geometry(f'{window_width}x{window_height}+{x}+{y}')
-
-# 创建带背景的标题
-background_img = ImageTk.PhotoImage(file=path_msg["background_path"])
-title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑体', 50, 'bold'), fg='white',
-                       image=background_img, compound='center')
-title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
-
-
-def camera():
-    """单本入库"""
-    # 隐藏菜单窗口
-    init_window.withdraw()
-
-    # 创建新窗口
-    top = tk.Toplevel()
-    top.title("摄像头-逐本入库")
-    top.geometry(f'{screen_width}x{screen_height}+{0}+{0}')
-
-    # 获取摄像头
-    cap = cv2.VideoCapture(0)
-
-    # 创建放置实时画面和被分类图片的组件
-    img_update_label = tk.Label(top)
-    img_update_label.place(x=0, y=0)
-    img_tobe_classify_label = tk.Label(top)
-    img_tobe_classify_label.place(x=800, y=0)
-
-    # 实时显示图像
-    update_pic(cap, img_update_label)
-
-    # 运行主线程
-    all_threading(top, img_tobe_classify_label)
-
-    # 关闭窗口时，释放摄像头资源
-    def on_closing():
-        cap.release()
-        top.destroy()
-        init_window.deiconify()
-
-    top.protocol("WM_DELETE_WINDOW", on_closing)
-
-
-def folder():
-    """批量入库"""
-    # 创建新窗口
-    top = tk.Toplevel()
-    top.title("文件夹-批量入库")
-    width = screen_width // 2
-    height = screen_height // 5
-    pos_x = (screen_width - width) // 2
-    pos_y = (screen_height - height) // 2
-    top.geometry(f'{width}x{height}+{pos_x}+{pos_y}')
-
-    # 显示提示语句
-    tip = tk.Label(top, text="请输入需要分类的图片所在的文件夹路径！", font=('黑体', 20, 'bold'))
-    tip.pack(padx=0, pady=0, side='top', anchor='center')
-    # 创建输入框，获取用户输入的文件夹
-    user_input = tk.Entry(top, font=('宋体', 15))
-    user_input.pack(padx=30, pady=20, side='top', anchor='center', ipadx=5, ipady=15, fill='x')
-
-    # 输入完毕后，进行之后的操作，在按钮绑定事件中完成
-    confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input))
-    confirm_button.pack(side='top', anchor='center')
-
-
-def database():
-    bases = tk.Toplevel()
-    bases.title("仓库")
-    bases.geometry("800x600+400+300")
-    num_book = get_data.get_data()
-    #num_book=((10,20),(15,25),(5,10),(7,9))
-    num_books = {i + 1: list(t) for i, t in enumerate(num_book)}
-    # num_books={  1: [10, 20], 2: [15, 25], 3: [5, 10],4:[7,9]}#测试用
-    book_numbers = {
-        '数理基础类': num_books.get(1, []),
-        '历史哲学类': num_books.get(2, []),
-        '计算机专业类': num_books.get(3, []),
-        '小说文学类': num_books.get(4, [])
-    }
-    listboxes = []
-
-    for i, (key, books) in enumerate(book_names.items()):
-        frame = tk.Frame(bases)
-        frame.grid(row=0, column=i, padx=10, pady=10, sticky="nsew")
-
-        bases.columnconfigure(i, weight=1)
-        frame.columnconfigure(0, weight=1)
-        frame.rowconfigure(1, weight=1)
-
-        label = tk.Label(frame, text=key,font=("黑体", 10))
-        label.grid(row=0, column=0, sticky="w")
-
-        listbox = tk.Listbox(frame,font=("黑体", 10))
-        listbox.grid(row=1, column=0, sticky="nsew")
-
-        numbers = book_numbers[key]
-
-        total_number = 0
-        for book, number in zip(books, numbers):
-            listbox.insert(tk.END, f"{book} - {number}")
-            total_number += number
-
-        listbox.insert(tk.END, f"Total number: {total_number}")
-
-        # 存储 Listbox 控件
-        listboxes.append(listbox)
-
-    # 设置主窗口的权重，使其可以调整大小
-    for i in range(len(book_names)):
-        bases.columnconfigure(i, weight=1)
-    bases.rowconfigure(0, weight=1)
-
-    # 运行主循环
-    bases.mainloop()
-
-# 创建按钮
-buttons = tk.Frame(init_window)
-buttons.place(x=0, y=int(window_height * 0.8))
-button1 = tk.Button(buttons, text="单本入库", font=("黑体", 30), command=camera)
-button2 = tk.Button(buttons, text="批量入库", font=("黑体", 30), command=folder)
-button3 = tk.Button(buttons, text="查看仓库", font=("黑体", 30), command=database)
-button1.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
-button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
-button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
-
-init_window.mainloop()
-
+# 工具函数
 def get_info(entry):
     """
     批量入库的按钮绑定事件
@@ -158,7 +21,7 @@ def get_info(entry):
         # 如果路径非法，打开会话框提示用户重新输入
         messagebox.showerror(title="ERROR", message="文件夹路径不合法")
     else:
-        messagebox.showinfo(title="提示", message="正在分类中，请耐心等待哦\n分类结束后将弹窗提醒您")
+        messagebox.showinfo(title="提示", message="正在分类中，这需要一些时间\n分类结束后将弹窗提醒您")
         # with open(info, 'r') as f:
         #     img_files = os.listdir(info)
         #     for img in img_files:
@@ -311,3 +174,142 @@ def all_threading(sub_window, img_label):
     threading.Thread(target=main_process, args=(sub_window,)).start()
 
     sub_window.after(interval * 1000, lambda: all_threading(sub_window, img_label))
+
+# 创建窗口并使其居中显示
+init_window = tk.Tk()
+init_window.title('图书分类管理系统')
+
+screen_width = init_window.winfo_screenwidth()
+screen_height = init_window.winfo_screenheight()
+window_width = 900
+window_height = 700
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2 - 20  # 考虑到任务栏，额外-20后能使窗口位于视觉正中心
+init_window.geometry(f'{window_width}x{window_height}+{x}+{y}')
+
+# 创建带背景的标题
+background_img = ImageTk.PhotoImage(file=path_msg["background_path"])
+title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑体', 50, 'bold'), fg='white',
+                       image=background_img, compound='center')
+title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
+
+
+def camera():
+    """单本入库"""
+    # 隐藏菜单窗口
+    init_window.withdraw()
+
+    # 创建新窗口
+    top = tk.Toplevel()
+    top.title("摄像头-逐本入库")
+    top.geometry(f'{screen_width}x{screen_height}+{0}+{0}')
+
+    # 获取摄像头
+    cap = cv2.VideoCapture(0)
+
+    # 创建放置实时画面和被分类图片的组件
+    img_update_label = tk.Label(top)
+    img_update_label.place(x=0, y=0)
+    img_tobe_classify_label = tk.Label(top)
+    img_tobe_classify_label.place(x=800, y=0)
+
+    # 实时显示图像
+    update_pic(cap, img_update_label)
+
+    # 运行主线程
+    all_threading(top, img_tobe_classify_label)
+
+    # 关闭窗口时，释放摄像头资源
+    def on_closing():
+        cap.release()
+        top.destroy()
+        init_window.deiconify()
+
+    top.protocol("WM_DELETE_WINDOW", on_closing)
+
+
+def folder():
+    """批量入库"""
+    # 创建新窗口
+    top = tk.Toplevel()
+    top.title("文件夹-批量入库")
+    width = screen_width // 2
+    height = screen_height // 5
+    pos_x = (screen_width - width) // 2
+    pos_y = (screen_height - height) // 2
+    top.geometry(f'{width}x{height}+{pos_x}+{pos_y}')
+
+    # 显示提示语句
+    tip = tk.Label(top, text="请输入需要分类的图片所在的文件夹路径！", font=('黑体', 20, 'bold'))
+    tip.pack(padx=0, pady=0, side='top', anchor='center')
+    # 创建输入框，获取用户输入的文件夹
+    user_input = tk.Entry(top, font=('宋体', 15))
+    user_input.pack(padx=30, pady=20, side='top', anchor='center', ipadx=5, ipady=15, fill='x')
+
+    # 输入完毕后，进行之后的操作，在按钮绑定事件中完成
+    confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input))
+    confirm_button.pack(side='top', anchor='center')
+
+
+def database():
+    bases = tk.Toplevel()
+    bases.title("仓库")
+    bases.geometry("800x600+400+300")
+    num_book = get_data.get_data()
+    #num_book=((10,20),(15,25),(5,10),(7,9))
+    num_books = {i + 1: list(t) for i, t in enumerate(num_book)}
+    # num_books={  1: [10, 20], 2: [15, 25], 3: [5, 10],4:[7,9]}#测试用
+    book_numbers = {
+        '数理基础类': num_books.get(1, []),
+        '历史哲学类': num_books.get(2, []),
+        '计算机专业类': num_books.get(3, []),
+        '小说文学类': num_books.get(4, [])
+    }
+    listboxes = []
+
+    for i, (key, books) in enumerate(book_names.items()):
+        frame = tk.Frame(bases)
+        frame.grid(row=0, column=i, padx=10, pady=10, sticky="nsew")
+
+        bases.columnconfigure(i, weight=1)
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
+
+        label = tk.Label(frame, text=key,font=("黑体", 10))
+        label.grid(row=0, column=0, sticky="w")
+
+        listbox = tk.Listbox(frame,font=("黑体", 10))
+        listbox.grid(row=1, column=0, sticky="nsew")
+
+        numbers = book_numbers[key]
+
+        total_number = 0
+        for book, number in zip(books, numbers):
+            listbox.insert(tk.END, f"{book} - {number}")
+            total_number += number
+
+        listbox.insert(tk.END, f"Total number: {total_number}")
+
+        # 存储 Listbox 控件
+        listboxes.append(listbox)
+
+    # 设置主窗口的权重，使其可以调整大小
+    for i in range(len(book_names)):
+        bases.columnconfigure(i, weight=1)
+    bases.rowconfigure(0, weight=1)
+
+    # 运行主循环
+    bases.mainloop()
+
+# 创建按钮
+buttons = tk.Frame(init_window)
+buttons.place(x=0, y=int(window_height * 0.8))
+button1 = tk.Button(buttons, text="单本入库", font=("黑体", 30), command=camera)
+button2 = tk.Button(buttons, text="批量入库", font=("黑体", 30), command=folder)
+button3 = tk.Button(buttons, text="查看仓库", font=("黑体", 30), command=database)
+button1.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+button2.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+button3.pack(side=tk.LEFT, padx=window_width // 20, pady=int(window_height * 0.04))
+
+init_window.mainloop()
+
