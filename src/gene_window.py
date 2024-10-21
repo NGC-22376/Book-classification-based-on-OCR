@@ -91,12 +91,14 @@ def database():
     bases.title("仓库")
     bases.geometry("800x600+400+300")
     num_book = get_data.get_data()
-    #num_book={  1: [10, 20], 2: [15, 25], 3: [5, 10],4:[7,9]}#测试用
+    #num_book=((10,20),(15,25),(5,10),(7,9))
+    num_books = {i + 1: list(t) for i, t in enumerate(num_book)}
+    # num_books={  1: [10, 20], 2: [15, 25], 3: [5, 10],4:[7,9]}#测试用
     book_numbers = {
-        '数理基础类': num_book.get(1, []),
-        '历史哲学类': num_book.get(2, []),
-        '计算机专业类': num_book.get(3, []),
-        '小说文学类': num_book.get(4, [])
+        '数理基础类': num_books.get(1, []),
+        '历史哲学类': num_books.get(2, []),
+        '计算机专业类': num_books.get(3, []),
+        '小说文学类': num_books.get(4, [])
     }
     listboxes = []
 
