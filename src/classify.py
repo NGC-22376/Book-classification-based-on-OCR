@@ -4,8 +4,6 @@ import pymysql
 from config import sql_msg, path_msg, book_names
 from pymysql import Error
 
-
-
 ocr = paddleocr.PaddleOCR()
 
 db = pymysql.connect(host=sql_msg['my_host'],
@@ -30,7 +28,6 @@ for line in result:
             break
     if n:
         break
-
 
 t = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 

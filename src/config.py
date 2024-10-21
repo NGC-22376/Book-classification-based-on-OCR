@@ -18,6 +18,7 @@ path_msg = {
     "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\code.uvproj",
     "mcu_obj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
 }
+
 book_classes = ['数理基础类', '历史哲学类', '计算机专业类', '小说文学类']
 
 book_names = {

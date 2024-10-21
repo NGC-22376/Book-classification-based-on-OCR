@@ -1,10 +1,14 @@
 import concurrent.futures
+import os.path
 import threading
 import time
 import tkinter as tk
+import tkinter.messagebox as messagebox
 import cv2
 from PIL import Image, ImageTk
 import subprocess
+
+from fontTools.misc.classifyTools import classify
 
 import config
 from config import path_msg, book_names, book_classes, interval
@@ -29,8 +33,27 @@ title_label = tk.Label(init_window, text='图书分类管理系统', font=('黑�
 title_label.place(x=0, y=0, width=window_width, height=int(window_height * 0.8))
 
 
-# 计时器: 使用Tkinter的after方法来避免阻塞
+def get_info(entry):
+    """
+    批量入库的按钮绑定事件
+    :param entry: 需要获取输入的文本框
+    """
+    info = entry.get()
+    if not os.path.exists(info):
+        # 如果路径非法，打开会话框提示用户重新输入
+        messagebox.showerror(title="ERROR", message="文件夹路径不合法")
+    else:
+        messagebox.showinfo(title="提示", message="正在分类中，请耐心等待哦\n分类结束后将弹窗提醒您")
+        # with open(info, 'r') as f:
+        #     img_files = os.listdir(info)
+        #     for img in img_files:
+        #         classify.classify(img)
+        messagebox.showinfo(title="提示", message="分类完成\n感谢您的使用！")
+
+
+
 def clock(window, clock_label, remaining_time):
+    """计时器: 使用Tkinter的after方法来避免阻塞"""
     if remaining_time > 0:
         clock_label.config(text=f"下一次拍照:{remaining_time}秒后")
         # 每1000ms更新一次倒计时（1秒）
@@ -39,8 +62,8 @@ def clock(window, clock_label, remaining_time):
         clock_label.config(text="拍照")
 
 
-# 显示图像
 def show_img(frame, widget, opt_code):
+    """显示图像，包括实时帧和被分类图"""
     # 实时帧显示
     if opt_code == 0:
         # 将OpenCV的BGR帧转换为RGB格式
@@ -56,11 +79,11 @@ def show_img(frame, widget, opt_code):
     widget.image = imgtk  # 防止图片被垃圾回收
 
 
-# 实时画面显示（左上角窗口）
-global img_to_classify
+global img_to_classif
 
 
 def update_pic(cap, widget):
+    """实时画面显示（左上角窗口）"""
     global img_to_classify
     ret, img_to_classify = cap.read()
     if ret:
@@ -69,8 +92,8 @@ def update_pic(cap, widget):
     widget.after(10, update_pic, cap, widget)
 
 
-# 显示分类结果（右下角窗口）
 def show_result(window):
+    """显示分类结果（右下角窗口）"""
     print("结果显示函数")
     result_file = open(path_msg["result_path"], "r")
     top_class, _, sub_class = result_file.read()
@@ -81,14 +104,14 @@ def show_result(window):
     result_file.close()
 
 
-# 识别并显示结果
 def main_process(window):
+    """识别并显示结果"""
     print("主线函数")
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         # 进行分类识别，并将分类结果写入对应文件
-        future1=executor.submit(subprocess.run, ["python", r".\classify.py"])
-        future2=executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
-        #等待分类完成后显示分类结果
+        future1 = executor.submit(subprocess.run, ["python", r".\classify.py"])
+        future2 = executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
+        # 等待分类完成后显示分类结果
         future1.result()
         future2.result()
         show_result(window)
@@ -132,8 +155,8 @@ def main_process(window):
         time.sleep(5)
 
 
-# 创建所有后台线程并执行
 def all_threading(sub_window, img_label):
+    """创建所有后台线程并执行"""
     print("线程函数已执行")
     global img_to_classify
     # 定时器倒计时显示
@@ -148,8 +171,8 @@ def all_threading(sub_window, img_label):
     sub_window.after(interval * 1000, lambda: all_threading(sub_window, img_label))
 
 
-# 单本入库
 def camera():
+    """单本入库"""
     # 隐藏菜单窗口
     init_window.withdraw()
 
@@ -183,7 +206,26 @@ def camera():
 
 
 def folder():
-    pass
+    """批量入库"""
+    # 创建新窗口
+    top = tk.Toplevel()
+    top.title("文件夹-批量入库")
+    width = screen_width // 2
+    height = screen_height // 5
+    pos_x = (screen_width - width) // 2
+    pos_y = (screen_height - height) // 2
+    top.geometry(f'{width}x{height}+{pos_x}+{pos_y}')
+
+    # 显示提示语句
+    tip = tk.Label(top, text="请输入需要分类的图片所在的文件夹路径！", font=('黑体', 20, 'bold'))
+    tip.pack(padx=0, pady=0, side='top', anchor='center')
+    # 创建输入框，获取用户输入的文件夹
+    user_input = tk.Entry(top, font=('宋体', 15))
+    user_input.pack(padx=30, pady=20, side='top', anchor='center', ipadx=5, ipady=15, fill='x')
+
+    # 输入完毕后，进行之后的操作，在按钮绑定事件中完成
+    confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input))
+    confirm_button.pack(side='top', anchor='center')
 
 
 def database():
@@ -191,10 +233,10 @@ def database():
     bases.title("仓库")
     bases.geometry("800x600+400+300")
     num_book = get_data.get_data()
-    #num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
-    book_id=range(1,12)
-    book_names=config.book_names
-    #展平数据
+    # num_book=((1,),(5,),(5,),(5,),(5,),(5,),(6,),(5,),(5,),(7,),(5,),(5,))
+    book_id = range(1, 12)
+    book_names = config.book_names
+    # 展平数据
     flattened_num = [row[0] for row in num_book]
     book_numbers = {
         '数理基础类': flattened_num[5:7],
@@ -212,10 +254,10 @@ def database():
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
 
-        label = tk.Label(frame, text=key,font=("黑体", 10))
+        label = tk.Label(frame, text=key, font=("黑体", 10))
         label.grid(row=0, column=0, sticky="w")
 
-        listbox = tk.Listbox(frame,font=("黑体", 10))
+        listbox = tk.Listbox(frame, font=("黑体", 10))
         listbox.grid(row=1, column=0, sticky="nsew")
 
         numbers = book_numbers[key]
