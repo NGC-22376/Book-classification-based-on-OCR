@@ -153,5 +153,5 @@ def get_data():
         result_dict[id_2].append(count_per_id)
 
     final_result = tuple(tuple(counts) for counts in result_dict.values())
-    return final_result
+    return result_dict
 
