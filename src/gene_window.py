@@ -112,9 +112,9 @@ def main_process(window, img):
     :return:
     """
     print("主线函数")
+    # 进行分类识别，并将分类结果写入对应文件
+    classify.classify(img)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        # 进行分类识别，并将分类结果写入对应文件
-        classify.classify(img)
         future2 = executor.submit(subprocess.run, ["python", r".\mcu_top_class.py"])
         # 等待分类完成后显示分类结果
         future2.result()
@@ -175,7 +175,7 @@ def all_threading(sub_window, img_label):
 
     # 使用非阻塞的Tkinter方法显示图片和执行分类
     sub_window.after(interval * 1000, lambda: show_img(img_to_classify, img_label, 1))
-    threading.Thread(target=main_process, args=(sub_window,img_to_classify)).start()
+    threading.Thread(target=main_process, args=(sub_window, img_to_classify)).start()
 
     sub_window.after(interval * 1000, lambda: all_threading(sub_window, img_label))
 
@@ -254,8 +254,6 @@ def folder():
     # 输入完毕后，进行之后的操作，在按钮绑定事件中完成
     confirm_button = tk.Button(top, text="确认", font=('黑体', 15, 'bold'), command=lambda: get_info(user_input, top))
     confirm_button.pack(side='top', anchor='center')
-
-
 
 
 def database():

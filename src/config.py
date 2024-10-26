@@ -10,12 +10,12 @@ sql_msg = {
 path_msg = {
     "photo_path": r'..\output\book_photo.jpg',
     "result_path": r"..\output\result.txt",
-    "output_log_path": r'..\output',
+    "output_log_path": r'..\output.txt',
     "mcu_pre_path": r"..\output\CV.txt",
     "isp_path": r".\mcu.c",
     "background_path": r"..\output\init_background.png",
-    "keil_path":r"C:\Keil9.6.1\UV4\UV4.exe",
-    "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\code.uvproj",
+    "keil_path":r"C:\Keil_v5\UV4\UV4.exe",
+    "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\MCU_C51.uvproj",
     "mcu_obj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
 }
 

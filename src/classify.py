@@ -4,10 +4,10 @@ import pymysql
 from config import sql_msg, book_names,path_msg
 from pymysql import Error
 
-ocr = paddleocr.PaddleOCR()
 
 
 def classify(image_path):
+    ocr = paddleocr.PaddleOCR()
     result = ocr.ocr(image_path, cls=True)
     m = None
     n = None
