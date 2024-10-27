@@ -10,7 +10,7 @@ sql_msg = {
 path_msg = {
     "photo_path": r'..\output\book_photo.jpg',
     "result_path": r"..\output\result.txt",
-    "output_log_path": r'..\output.txt',
+    "output_log_path": r'..\output',
     "mcu_pre_path": r"..\output\CV.txt",
     "isp_path": r".\mcu.c",
     "background_path": r"..\output\init_background.png",
@@ -18,6 +18,12 @@ path_msg = {
     "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\MCU_C51.uvproj",
     "mcu_obj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
 }
+
+keil_command = [
+            path_msg["keil_path"],  # Keil 编译器路径
+            "-b", path_msg["mcu_proj_path"],  # 项目文件路径
+            "-o", path_msg["output_log_path"]  # 输出日志文件路径
+        ]
 
 book_classes = ['数理基础类', '历史哲学类', '计算机专业类', '小说文学类']
 
@@ -29,4 +35,4 @@ book_names = {
 }
 
 # 拍照间隔(s)
-interval = 15
+interval = 20

@@ -7,7 +7,7 @@ import tkinter.messagebox as messagebox
 import cv2
 from PIL import Image, ImageTk
 import subprocess
-from config import path_msg, book_names, book_classes, interval
+from config import path_msg, book_names, book_classes, interval, keil_command
 import classify
 import get_data
 
@@ -122,11 +122,7 @@ def main_process(window, img):
         # 等待写入完成再执行操作(一级分类)
         time.sleep(2)
         print("单片机启动-即将进行一级分类")
-        keil_command = [
-            path_msg["keil_path"],  # Keil 编译器路径
-            "-b", path_msg["mcu_proj_path"],  # 项目文件路径
-            "-o", path_msg["output_log_path"]  # 输出日志文件路径
-        ]
+
         # 调用 Keil 编译器
         try:
             result = subprocess.run(keil_command, check=True, capture_output=True, text=True, shell=True)
@@ -147,7 +143,7 @@ def main_process(window, img):
         print("单片机启动-即将进行二级分类")
         # 调用 Keil 编译器
         try:
-            result = subprocess.run(keil_command, check=True, capture_output=True, text=True, shell=True)
+            result = subprocess.run(keil_command, check=True, text=True, shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             print("编译成功")
             print("输出日志:")
             print(result.stdout)
