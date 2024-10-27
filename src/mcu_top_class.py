@@ -1,4 +1,4 @@
-from config import path_msg
+from config import path_msg, out_msg
 
 # 打开目标文件
 res_file = open(path_msg['result_path'], 'r')
@@ -15,9 +15,9 @@ pretext[target_line] = 'unsigned char timer1=' + result + ';' + '\n'
 for i in range(0, len(pretext)):
     isp_file.write(pretext[i])
 
+out_msg("一级分类写入单片机")
+
 # 关闭文件
 res_file.close()
 pre_file.close()
 isp_file.close()
-
-print("一级分类写入完成")

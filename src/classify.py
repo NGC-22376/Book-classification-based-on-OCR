@@ -2,6 +2,7 @@ import time
 import paddleocr
 import pymysql
 from config import sql_msg, book_names,path_msg
+from config import out_msg
 from pymysql import Error
 
 
@@ -24,6 +25,8 @@ def classify(image_path):
                 break
         if n:
             break
+
+    out_msg("识别完成")
     db = pymysql.connect(host=sql_msg['my_host'],
                          user=sql_msg['my_root'],
                          password=sql_msg['my_password'],
@@ -93,3 +96,5 @@ def classify(image_path):
     # 分类结果写入result.txt
     with open(path_msg["result_path"], 'w') as f:
         f.write(f"{m}\n{n}")
+
+    out_msg("识别结果写入result.txt")

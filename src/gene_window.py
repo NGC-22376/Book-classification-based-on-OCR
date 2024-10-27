@@ -7,7 +7,7 @@ import tkinter.messagebox as messagebox
 import cv2
 from PIL import Image, ImageTk
 import subprocess
-from config import path_msg, book_names, book_classes, interval, keil_command
+from config import path_msg, book_names, book_classes, interval, keil_command, out_msg
 import classify
 import get_data
 
@@ -95,7 +95,7 @@ def show_result(window):
     :param window: 单本入库的窗口
     :return:
     """
-    print("结果显示函数")
+    out_msg("结果显示窗口已更新")
     result_file = open(path_msg["result_path"], "r")
     top_class, _, sub_class = result_file.read()
     top_class = book_classes[ord(top_class) - ord('0')]
@@ -111,7 +111,7 @@ def main_process(window, img):
     :param window: 单本入库的窗口
     :return:
     """
-    print("主线函数")
+    out_msg("主线函数已开始执行")
     # 进行分类识别，并将分类结果写入对应文件
     classify.classify(img)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
@@ -119,12 +119,10 @@ def main_process(window, img):
         # 等待分类完成后显示分类结果
         future2.result()
         show_result(window)
-        # 等待写入完成再执行操作(一级分类)
-        time.sleep(2)
-        print("单片机启动-即将进行一级分类")
 
         # 调用 Keil 编译器
         try:
+            out_msg("Keil启动编译（一级分类)")
             result = subprocess.run(keil_command, check=True, capture_output=True, text=True, shell=True)
             print("编译成功")
             print("输出日志:")
@@ -133,16 +131,12 @@ def main_process(window, img):
             print(f"编译失败，错误码: {e.returncode}")
             print("错误输出:")
             print(e.stderr)
-        # 一级分类完成-等待烧录完成后继续执行
-        time.sleep(5)
 
         # 二级分类开始
         executor.submit(subprocess.run, ["python", r".\mcu_sub_class.py"])
-        # 等待二级分类写入完成再执行操作
-        time.sleep(2)
-        print("单片机启动-即将进行二级分类")
         # 调用 Keil 编译器
         try:
+            out_msg("Keil启动编译（二级分类)")
             result = subprocess.run(keil_command, check=True, text=True, shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             print("编译成功")
             print("输出日志:")
@@ -151,8 +145,6 @@ def main_process(window, img):
             print(f"编译失败，错误码: {e.returncode}")
             print("错误输出:")
             print(e.stderr)
-        # 等待烧录完成后继续执行
-        time.sleep(5)
 
 
 def all_threading(sub_window, img_label):
@@ -162,7 +154,7 @@ def all_threading(sub_window, img_label):
     :param img_label: 显示被分类图片的组件
     :return:
     """
-    print("线程函数已执行")
+    out_msg("主线程开始运行")
     global img_to_classify
     # 定时器倒计时显示
     clock_label = tk.Label(sub_window, text="开始计时", font=('黑体', 20, 'bold'))

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # 数据库配置相关信息
 sql_msg = {
     'my_host': 'localhost',
@@ -14,16 +16,16 @@ path_msg = {
     "mcu_pre_path": r"..\output\CV.txt",
     "isp_path": r".\mcu.c",
     "background_path": r"..\output\init_background.png",
-    "keil_path":r"C:\Keil_v5\UV4\UV4.exe",
-    "mcu_proj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\MCU_C51.uvproj",
-    "mcu_obj_path":r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
+    "keil_path": r"C:\Keil_v5\UV4\UV4.exe",
+    "mcu_proj_path": r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\MCU_C51.uvproj",
+    "mcu_obj_path": r"C:\Users\30744\Desktop\CodeFiles\MCU_C51\Objects"
 }
 
 keil_command = [
-            path_msg["keil_path"],  # Keil 编译器路径
-            "-b", path_msg["mcu_proj_path"],  # 项目文件路径
-            "-o", path_msg["output_log_path"]  # 输出日志文件路径
-        ]
+    path_msg["keil_path"],  # Keil 编译器路径
+    "-b", path_msg["mcu_proj_path"],  # 项目文件路径
+    "-o", path_msg["output_log_path"]  # 输出日志文件路径
+]
 
 book_classes = ['数理基础类', '历史哲学类', '计算机专业类', '小说文学类']
 
@@ -35,4 +37,13 @@ book_names = {
 }
 
 # 拍照间隔(s)
-interval = 20
+interval = 12
+
+
+# 时间获取函数
+def out_msg(msg):
+    # 获取当前时间
+    now = datetime.now()
+    # 格式化输出时、分、秒
+    current_time = now.strftime("%H:%M:%S")
+    print(f"{msg} 当前时间:{current_time}")
